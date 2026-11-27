@@ -1,0 +1,2427 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistem Pengurusan CPD | JKTD IAB Cawangan Sabah</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN untuk Analitik Papan Pemuka -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', 'system-ui', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            obsidian: {
+              950: '#05070B',
+              900: '#0A0E17',
+              800: '#121826',
+              700: '#1C2438',
+            },
+            royal: {
+              950: '#0D1B3E',
+              900: '#132A63',
+              800: '#1E3A8A',
+              700: '#1D4ED8',
+              600: '#2563EB',
+              500: '#3B82F6',
+              100: '#DBEAFE',
+              50: '#EFF6FF',
+            },
+            gold: {
+              700: '#9A6E14',
+              600: '#B8860B',
+              500: '#D4AF37',
+              400: '#E5C158',
+              300: '#F3D87F',
+              100: '#FEF3C7',
+              50: '#FFFBEB',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: #F3F5F9;
+      color: #0A0E17;
+    }
+
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    }
+
+    /* Gradien Eksklusif Hitam - Biru Diraja - Emas */
+    .hero-gradient {
+      background: linear-gradient(135deg, #05070B 0%, #0D1B3E 58%, #1E3A8A 100%);
+    }
+
+    .gold-gradient {
+      background: linear-gradient(135deg, #B8860B 0%, #D4AF37 50%, #F3D87F 100%);
+    }
+
+    .gold-text-gradient {
+      background: linear-gradient(135deg, #F3D87F 0%, #D4AF37 55%, #B8860B 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gold-border-top {
+      position: relative;
+      overflow: hidden;
+    }
+    .gold-border-top::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #1E3A8A 0%, #D4AF37 50%, #0A0E17 100%);
+    }
+
+    /* Grid Digital Halus untuk Latar Belakang Muka Hadapan */
+    .cyber-grid {
+      background-image:
+        linear-gradient(to right, rgba(59, 130, 246, 0.09) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(212, 175, 55, 0.07) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* Scrollbar Kemas */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #E2E8F0;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #94A3B8;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #D4AF37;
+    }
+
+    /* Animasi Transisi */
+    .fade-in {
+      animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-hover {
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -8px rgba(10, 14, 23, 0.12);
+      border-color: rgba(212, 175, 55, 0.45);
+    }
+
+    /* Gaya Cetakan (Print) */
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: white !important;
+      }
+      main {
+        margin-left: 0 !important;
+        padding: 0 !important;
+      }
+      .print-card {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+      .hero-gradient {
+        background: #0A0E17 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-gold-300/40 selection:text-obsidian-950">
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none no-print"></div>
+
+  <!-- ========================================================================= -->
+  <!-- HALAMAN PERTAMA: MUKA HADAPAN PORTAL RASMI (HITAM, EMAS & BIRU)           -->
+  <!-- ========================================================================= -->
+  <section id="portalLanding" class="fixed inset-0 z-50 min-h-screen w-full bg-obsidian-950 text-white overflow-y-auto flex flex-col justify-between fade-in no-print">
+    <!-- Latar Belakang Banner Rasmi Penuh -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      <img
+        id="landingBannerImg"
+        src="https://lh3.googleusercontent.com/d/1JVMBlx80pv53MQ25Z0smXvuFWYQqrx-m"
+        alt="Banner Rasmi Jabatan Kepimpinan Teknologi dan Digital IAB Cawangan Sabah"
+        class="w-full h-full object-cover object-center"
+        onload="handleBannerLoad()"
+        onerror="handleBannerError()"
+      />
+      <!-- Lapisan Gradien Bawah Halus agar Bangunan IAB Sabah & Motif Kekal Jelas -->
+      <div id="bannerBottomScrim" class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-obsidian-950/90 via-obsidian-950/50 to-transparent"></div>
+
+      <!-- Latar Belakang Digital & Siluet Gunung Kinabalu (Fallback Automatik jika fail gambar tiada) -->
+      <div id="landingFallbackBg" class="hidden absolute inset-0 hero-gradient">
+        <div class="absolute inset-0 cyber-grid opacity-70"></div>
+        <canvas id="digitalNetworkCanvas" class="absolute inset-0 w-full h-full opacity-65"></canvas>
+        <!-- Pencahayaan Radial Biru & Emas -->
+        <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-royal-600/25 blur-3xl"></div>
+        <div class="absolute bottom-12 right-10 w-[28rem] h-[28rem] rounded-full bg-gold-500/15 blur-3xl"></div>
+        <!-- Siluet Digital Gunung Kinabalu & Motif Halus Sabah -->
+        <svg class="absolute bottom-0 left-0 w-full h-64 sm:h-80 opacity-35" viewBox="0 0 1440 320" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="kinabaluStroke" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.2"/>
+              <stop offset="50%" stop-color="#E5C158" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#3B82F6" stop-opacity="0.2"/>
+            </linearGradient>
+            <linearGradient id="kinabaluFill" x1="720" y1="40" x2="720" y2="320" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#1E3A8A" stop-opacity="0.55"/>
+              <stop offset="100%" stop-color="#05070B" stop-opacity="0.95"/>
+            </linearGradient>
+          </defs>
+          <path d="M0 280 L180 230 L320 245 L490 150 L585 112 L645 128 L705 62 L755 88 L810 72 L885 138 L995 125 L1145 205 L1295 190 L1440 245 L1440 320 L0 320 Z" fill="url(#kinabaluFill)" stroke="url(#kinabaluStroke)" stroke-width="2"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Garis Aksen Emas Atas -->
+    <div class="relative z-10 h-1.5 w-full gold-gradient shrink-0"></div>
+
+    <!-- Bar Atas Ringkas (Bersih tanpa butang utiliti) -->
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8 pt-5 flex items-center justify-between gap-3">
+      <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-obsidian-950/75 backdrop-blur-md border border-gold-500/40 shadow-lg">
+        <span class="w-2 h-2 rounded-full bg-gold-400 animate-pulse"></span>
+        <span class="text-[11px] font-bold tracking-wider uppercase text-gold-300">KPM • IAB Cawangan Sabah</span>
+      </div>
+
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-obsidian-950/75 backdrop-blur-md border border-royal-500/40 text-[11px] font-semibold text-royal-100 shadow-lg">
+        <i data-lucide="calendar-range" class="w-3.5 h-3.5 text-gold-400"></i>
+        <span>Rekod CPD 2024 – 2027</span>
+      </div>
+    </div>
+
+    <!-- Kandungan Tengah (Dipaparkan apabila mod fallback digital aktif supaya banner tidak terlindung) -->
+    <div id="landingFallbackHero" class="hidden relative z-10 flex-1 flex items-center justify-center px-5 sm:px-8 py-8">
+      <div class="max-w-4xl w-full text-center space-y-5">
+        <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-royal-900/70 border border-gold-400/40 text-gold-300 text-xs font-bold tracking-widest uppercase shadow-lg">
+          <i data-lucide="cpu" class="w-4 h-4 text-gold-400"></i>
+          <span>Portal Pengurusan Peserta &amp; Kursus CPD</span>
+        </div>
+
+        <h1 class="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-white drop-shadow-lg">
+          Jabatan Kepimpinan <br class="hidden sm:inline" />
+          <span class="gold-text-gradient">Teknologi Digital (JKTD)</span>
+        </h1>
+
+        <div class="flex items-center justify-center gap-3">
+          <span class="h-[2px] w-10 sm:w-16 bg-gradient-to-r from-transparent to-gold-400"></span>
+          <p class="font-display text-sm sm:text-xl font-bold tracking-[0.18em] uppercase text-royal-100">
+            Institut Aminuddin Baki Cawangan Sabah
+          </p>
+          <span class="h-[2px] w-10 sm:w-16 bg-gradient-to-l from-transparent to-gold-400"></span>
+        </div>
+
+        <p class="max-w-2xl mx-auto text-xs sm:text-sm text-slate-300 leading-relaxed">
+          Sistem pengurusan bersepadu bagi rekod kursus <strong>MyDigital Leaders (MDL) Pertengahan</strong>, progresif <strong>MDL Lanjutan</strong>, jadual latihan, dan pemantauan peruntukan kewangan jabatan.
+        </p>
+      </div>
+    </div>
+
+    <!-- Spacer apabila Banner Rasmi berjaya dimuatkan -->
+    <div id="landingBannerSpacer" class="relative z-10 flex-1"></div>
+
+    <!-- Dock Eksekutif Bawah (Statistik Langsung + Butang Masuk) -->
+    <div class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-8 pb-5 sm:pb-6">
+      <div class="rounded-2xl bg-obsidian-950/80 backdrop-blur-xl border border-gold-500/40 p-4 sm:p-5 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-4">
+        <!-- Ringkasan Identiti & Statistik -->
+        <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full lg:w-auto">
+          <div class="flex items-center gap-3 text-center sm:text-left">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-royal-700 via-royal-900 to-obsidian-900 border border-gold-400/60 flex items-center justify-center shrink-0 shadow-lg">
+              <i data-lucide="shield-check" class="w-5 h-5 text-gold-400"></i>
+            </div>
+            <div>
+              <p class="font-display font-extrabold text-sm sm:text-base text-white leading-tight">
+                Jabatan Kepimpinan Teknologi Digital (JKTD)
+              </p>
+              <p class="text-[11px] sm:text-xs text-gold-300 font-semibold">
+                Institut Aminuddin Baki Cawangan Sabah
+              </p>
+            </div>
+          </div>
+
+          <div class="hidden sm:block h-9 w-px bg-white/15"></div>
+
+          <!-- Ringkasan Statistik Pantas -->
+          <div class="flex items-center gap-4 sm:gap-6 text-center">
+            <div>
+              <p id="landingStatKursus" class="font-display text-lg sm:text-xl font-extrabold text-white">0</p>
+              <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Kursus CPD</p>
+            </div>
+            <div>
+              <p id="landingStatPertengahan" class="font-display text-lg sm:text-xl font-extrabold text-royal-100">0</p>
+              <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">MDL Pertengahan</p>
+            </div>
+            <div>
+              <p id="landingStatLanjutan" class="font-display text-lg sm:text-xl font-extrabold text-gold-400">0</p>
+              <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">MDL Lanjutan</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Butang Masuk Utama -->
+        <button
+          onclick="enterPortal()"
+          class="w-full lg:w-auto px-7 py-3.5 rounded-xl gold-gradient text-obsidian-950 font-display font-extrabold text-sm tracking-wide uppercase flex items-center justify-center gap-2.5 shadow-xl shadow-gold-500/25 hover:brightness-110 active:scale-[0.98] transition-all shrink-0"
+        >
+          <span>Masuk ke Portal</span>
+          <i data-lucide="arrow-right-circle" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- HALAMAN KEDUA: APLIKASI PENGURUSAN CPD & MDL                              -->
+  <!-- ========================================================================= -->
+  <div id="mainAppContainer" class="hidden min-h-screen flex">
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebarBackdrop" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-obsidian-950/70 backdrop-blur-sm z-30 hidden lg:hidden no-print"></div>
+
+    <!-- ==================== SIDEBAR NAVIGASI (HITAM OBSIDIAN & EMAS) ==================== -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 bg-obsidian-950 text-slate-200 flex flex-col border-r border-gold-500/20 shadow-2xl transition-transform duration-300 -translate-x-full lg:translate-x-0 no-print">
+      <!-- Garis Emas Atas -->
+      <div class="h-1 w-full gold-gradient"></div>
+
+      <!-- Header Organisasi -->
+      <div class="p-5 border-b border-white/10 flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-royal-700 via-royal-900 to-obsidian-900 border border-gold-500/60 flex items-center justify-center shadow-lg shadow-royal-900/50 shrink-0">
+          <i data-lucide="cpu" class="w-6 h-6 text-gold-400"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <h1 class="font-display font-extrabold text-white text-sm tracking-tight truncate">JKTD IAB Sabah</h1>
+          </div>
+          <p class="text-[11px] text-gold-400/90 font-medium leading-snug truncate">Pengurusan CPD &amp; MDL</p>
+        </div>
+        <button onclick="toggleMobileSidebar(false)" class="ml-auto lg:hidden text-slate-400 hover:text-gold-400 p-1.5 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Status Sambungan Apps Script -->
+      <div class="px-4 pt-4">
+        <div id="envBadge" class="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-obsidian-800/90 border border-gold-500/20 text-xs">
+          <span class="w-2 h-2 rounded-full bg-gold-400 animate-pulse shrink-0"></span>
+          <span class="text-slate-300 truncate font-medium" id="envBadgeText">Mod Pratonton (Local)</span>
+        </div>
+      </div>
+
+      <!-- Menu Utama -->
+      <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <p class="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gold-500/70">Menu Utama</p>
+
+        <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Papan Pemuka</span>
+        </button>
+
+        <button onclick="switchTab('jadual')" data-tab="jadual" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all">
+          <i data-lucide="calendar-days" class="w-4 h-4"></i>
+          <span>Jadual Kursus CPD</span>
+          <span id="badgeJadual" class="ml-auto text-[11px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-gold-300">0</span>
+        </button>
+
+        <p class="px-3 pt-5 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gold-500/70">Pengurusan Peserta MDL</p>
+
+        <button onclick="switchTab('pertengahan')" data-tab="pertengahan" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>MDL Pertengahan</span>
+          <span id="badgePertengahan" class="ml-auto text-[11px] font-bold px-2 py-0.5 rounded-full bg-royal-700/40 text-royal-100 border border-royal-500/30">0</span>
+        </button>
+
+        <button onclick="switchTab('lanjutan')" data-tab="lanjutan" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all">
+          <i data-lucide="award" class="w-4 h-4"></i>
+          <span>MDL Lanjutan</span>
+          <span id="badgeLanjutan" class="ml-auto text-[11px] font-bold px-2 py-0.5 rounded-full bg-gold-500/20 text-gold-300 border border-gold-500/30">0</span>
+        </button>
+
+        <p class="px-3 pt-5 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-gold-500/70">Kewangan &amp; Portal</p>
+
+        <button onclick="switchTab('kewangan')" data-tab="kewangan" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all">
+          <i data-lucide="wallet" class="w-4 h-4"></i>
+          <span>Peruntukan Kewangan</span>
+        </button>
+
+        <button onclick="returnToLanding()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-gold-300 transition-all mt-2">
+          <i data-lucide="home" class="w-4 h-4 text-gold-400"></i>
+          <span>Muka Hadapan</span>
+        </button>
+      </nav>
+
+      <!-- Footer Sidebar -->
+      <div class="p-4 border-t border-white/10 bg-obsidian-900/60">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-gold-500/15 border border-gold-500/30 flex items-center justify-center text-gold-400 shrink-0">
+            <i data-lucide="shield" class="w-4 h-4"></i>
+          </div>
+          <div class="text-[11px] leading-tight">
+            <p class="font-bold text-white">Institut Aminuddin Baki</p>
+            <p class="text-slate-400">Cawangan Sabah • 2024–2027</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== KANDUNGAN UTAMA ==================== -->
+    <main class="flex-1 lg:ml-72 min-w-0 flex flex-col min-h-screen">
+      <!-- Top Header Bar -->
+      <header class="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-slate-200/90 px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3 no-print shadow-xs">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleMobileSidebar(true)" class="lg:hidden p-2 rounded-xl text-obsidian-900 bg-slate-100 hover:bg-slate-200">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 id="pageTitle" class="text-lg sm:text-xl font-extrabold text-obsidian-950 tracking-tight">Papan Pemuka Utama</h2>
+              <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-gold-50 text-gold-700 border border-gold-400/50">JKTD</span>
+            </div>
+            <p id="pageSubtitle" class="text-xs text-slate-500">Jabatan Kepimpinan Teknologi Digital (JKTD), IAB Cawangan Sabah</p>
+          </div>
+        </div>
+
+        <!-- Kawalan Penapis Tahun Global (2024 - 2027) & Cetak -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="flex items-center bg-obsidian-950 p-1 rounded-xl border border-gold-500/30 shadow-xs overflow-x-auto">
+            <button onclick="setGlobalYear('ALL')" data-year="ALL" class="year-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">Semua</button>
+            <button onclick="setGlobalYear('2024')" data-year="2024" class="year-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">2024</button>
+            <button onclick="setGlobalYear('2025')" data-year="2025" class="year-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">2025</button>
+            <button onclick="setGlobalYear('2026')" data-year="2026" class="year-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">2026</button>
+            <button onclick="setGlobalYear('2027')" data-year="2027" class="year-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">2027</button>
+          </div>
+
+          <button onclick="window.print()" title="Cetak Paparan" class="p-2.5 rounded-xl border border-slate-200 bg-white hover:border-gold-500 hover:text-royal-800 text-obsidian-800 transition-colors shadow-xs">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Container Paparan Tab -->
+      <div class="p-4 sm:p-6 lg:p-8 flex-1 max-w-[1600px] w-full mx-auto">
+
+        <!-- ==================== TAB 1: PAPAN PEMUKA (DASHBOARD) ==================== -->
+        <section id="tab-dashboard" class="tab-section space-y-6 fade-in">
+          <!-- Sepanduk Hero Eksekutif (Hitam - Biru - Emas) -->
+          <div class="hero-gradient rounded-2xl p-6 sm:p-7 text-white relative overflow-hidden border border-gold-500/30 shadow-xl print-card">
+            <div class="absolute -right-12 -top-12 w-56 h-56 rounded-full bg-gold-500/10 blur-2xl pointer-events-none"></div>
+            <div class="absolute right-24 -bottom-16 w-64 h-64 rounded-full bg-royal-500/20 blur-2xl pointer-events-none"></div>
+
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+              <div class="space-y-2 max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-gold-400/40 text-gold-300 text-[11px] font-bold tracking-wide uppercase">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                  <span>Portal Rasmi Pengurusan CPD • Rekod 2024 – 2027</span>
+                </div>
+                <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
+                  Jabatan Kepimpinan Teknologi Digital <span class="text-gold-400">(JKTD)</span>
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  Institut Aminuddin Baki Cawangan Sabah — Pemantauan bersepadu jadual kursus, rekod progresif peserta <strong>MyDigital Leaders (MDL) Pertengahan ke Lanjutan</strong>, serta prestasi peruntukan kewangan jabatan.
+                </p>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2.5 shrink-0 no-print">
+                <button onclick="openCourseModal()" class="px-4 py-2.5 rounded-xl gold-gradient text-obsidian-950 font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-gold-500/20 hover:brightness-105 transition-all">
+                  <i data-lucide="plus-circle" class="w-4 h-4"></i> Tambah Kursus
+                </button>
+                <button onclick="openPertengahanModal()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold text-xs flex items-center gap-2 backdrop-blur-xs transition-all">
+                  <i data-lucide="user-plus" class="w-4 h-4 text-gold-300"></i> Daftar Peserta
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kad KPI Eksekutif -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs card-hover gold-border-top print-card">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Jumlah Kursus CPD</p>
+                  <h3 id="kpiTotalKursus" class="text-3xl font-extrabold text-obsidian-950 mt-2">0</h3>
+                </div>
+                <div class="w-11 h-11 rounded-xl bg-obsidian-950 text-gold-400 border border-gold-500/30 flex items-center justify-center shadow-xs">
+                  <i data-lucide="calendar-check" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <p id="kpiKursusSub" class="text-xs text-slate-500 mt-3 font-medium">0 Pertengahan • 0 Lanjutan</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs card-hover gold-border-top print-card">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Peserta MDL Pertengahan</p>
+                  <h3 id="kpiTotalPertengahan" class="text-3xl font-extrabold text-royal-800 mt-2">0</h3>
+                </div>
+                <div class="w-11 h-11 rounded-xl bg-royal-800 text-white border border-royal-600 flex items-center justify-center shadow-xs">
+                  <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <p id="kpiPertengahanSub" class="text-xs text-slate-500 mt-3 font-medium">0 orang lulus &amp; layak ke Lanjutan</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs card-hover gold-border-top print-card">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Peserta MDL Lanjutan</p>
+                  <h3 id="kpiTotalLanjutan" class="text-3xl font-extrabold text-gold-700 mt-2">0</h3>
+                </div>
+                <div class="w-11 h-11 rounded-xl gold-gradient text-obsidian-950 flex items-center justify-center shadow-xs">
+                  <i data-lucide="award" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <p id="kpiLanjutanSub" class="text-xs text-slate-500 mt-3 font-medium">Kadar progresif: 0% daripada alumni</p>
+            </div>
+
+            <div class="bg-obsidian-950 rounded-2xl p-5 border border-gold-500/30 shadow-md card-hover text-white print-card">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-[11px] font-bold text-gold-400 uppercase tracking-wider">Perbelanjaan Digunakan</p>
+                  <h3 id="kpiTotalBelanja" class="text-2xl font-extrabold text-white mt-2">RM 0</h3>
+                </div>
+                <div class="w-11 h-11 rounded-xl bg-royal-800/80 text-gold-400 border border-gold-500/40 flex items-center justify-center">
+                  <i data-lucide="banknote" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <p id="kpiBelanjaSub" class="text-xs text-slate-300 mt-3 font-medium">Daripada peruntukan RM 0 (0%)</p>
+            </div>
+          </div>
+
+          <!-- Carta Analitik -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs print-card">
+              <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                <div>
+                  <h4 class="font-bold text-obsidian-950 text-sm">Trend Peserta MDL (2024 – 2027)</h4>
+                  <p class="text-xs text-slate-500">Perbandingan penyertaan Pertengahan (Biru) vs Lanjutan (Emas)</p>
+                </div>
+                <span class="w-8 h-8 rounded-lg bg-royal-50 text-royal-800 flex items-center justify-center">
+                  <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                </span>
+              </div>
+              <div class="h-64 relative">
+                <canvas id="chartPeserta"></canvas>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs print-card">
+              <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                <div>
+                  <h4 class="font-bold text-obsidian-950 text-sm">Peruntukan &amp; Perbelanjaan Kewangan (RM)</h4>
+                  <p class="text-xs text-slate-500">Prestasi penggunaan peruntukan kursus mengikut tahun (2024 – 2027)</p>
+                </div>
+                <span class="w-8 h-8 rounded-lg bg-gold-50 text-gold-700 flex items-center justify-center">
+                  <i data-lucide="trending-up" class="w-4 h-4"></i>
+                </span>
+              </div>
+              <div class="h-64 relative">
+                <canvas id="chartKewangan"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ringkasan Progresif & Jadual Terkini -->
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs print-card flex flex-col">
+              <div class="flex items-center justify-between mb-2">
+                <h4 class="font-bold text-obsidian-950 text-sm">Calon Layak ke MDL Lanjutan</h4>
+                <span id="badgeCalonLayak" class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-gold-100 text-gold-700 border border-gold-400/50">0 calon</span>
+              </div>
+              <p class="text-xs text-slate-500 mb-4">Alumni MDL Pertengahan (Lulus) yang sedia dicalonkan ke MDL Lanjutan.</p>
+              <div id="dashboardEligibleList" class="space-y-2.5 flex-1 overflow-y-auto max-h-64 pr-1"></div>
+              <button onclick="switchTab('lanjutan')" class="mt-4 w-full py-2.5 rounded-xl bg-obsidian-950 hover:bg-royal-900 text-gold-300 text-xs font-bold transition-colors no-print">
+                Urus Pendaftaran MDL Lanjutan →
+              </button>
+            </div>
+
+            <div class="xl:col-span-2 bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs print-card">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h4 class="font-bold text-obsidian-950 text-sm">Ringkasan Jadual Kursus CPD</h4>
+                  <p class="text-xs text-slate-500">Senarai pelaksanaan kursus JKTD bagi tahun dipilih</p>
+                </div>
+                <button onclick="switchTab('jadual')" class="text-xs font-bold text-royal-700 hover:text-gold-600 transition-colors no-print">Lihat Semua →</button>
+              </div>
+              <div class="overflow-x-auto rounded-xl border border-slate-200/80">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="bg-obsidian-950 text-[11px] uppercase tracking-wider text-gold-300">
+                      <th class="py-3 px-3.5">Kursus &amp; Siri</th>
+                      <th class="py-3 px-3.5">Tarikh &amp; Tempat</th>
+                      <th class="py-3 px-3.5">Peserta</th>
+                      <th class="py-3 px-3.5 text-right">Perbelanjaan</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboardCourseTable" class="divide-y divide-slate-100 text-xs"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 2: JADUAL KURSUS CPD ==================== -->
+        <section id="tab-jadual" class="tab-section hidden space-y-5 fade-in">
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs flex flex-wrap items-center justify-between gap-3 no-print">
+            <div class="flex flex-wrap items-center gap-2 flex-1 min-w-[240px]">
+              <div class="relative flex-1 max-w-xs">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input id="searchJadual" oninput="renderJadual()" type="text" placeholder="Cari kod, tempat, pengajar..." class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500">
+              </div>
+              <select id="filterKategoriJadual" onchange="renderJadual()" class="px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-gold-500/40">
+                <option value="ALL">Semua Kategori</option>
+                <option value="MDL Pertengahan">MDL Pertengahan</option>
+                <option value="MDL Lanjutan">MDL Lanjutan</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="exportCSV('jadual')" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:border-gold-500 text-obsidian-900 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                <i data-lucide="download" class="w-3.5 h-3.5 text-gold-600"></i> Eksport CSV
+              </button>
+              <button onclick="openCourseModal()" class="px-4 py-2 rounded-xl bg-royal-800 hover:bg-royal-900 text-white border border-gold-500/30 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors">
+                <i data-lucide="plus" class="w-4 h-4 text-gold-400"></i> Tambah Kursus
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden print-card">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead class="bg-obsidian-950 border-b border-gold-500/30 text-[11px] uppercase tracking-wider text-gold-300">
+                  <tr>
+                    <th class="py-3.5 px-4">Kod &amp; Nama Kursus</th>
+                    <th class="py-3.5 px-4">Tarikh &amp; Tahun</th>
+                    <th class="py-3.5 px-4">Tempat Pelaksanaan</th>
+                    <th class="py-3.5 px-4">Sasaran Peserta</th>
+                    <th class="py-3.5 px-4 text-center">Bil. Peserta</th>
+                    <th class="py-3.5 px-4">Tenaga Pengajar</th>
+                    <th class="py-3.5 px-4 text-right no-print">Tindakan</th>
+                  </tr>
+                </thead>
+                <tbody id="tableJadualBody" class="divide-y divide-slate-100 text-xs"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 3: PESERTA MDL PERTENGAHAN ==================== -->
+        <section id="tab-pertengahan" class="tab-section hidden space-y-5 fade-in">
+          <div class="bg-gradient-to-r from-royal-950 to-royal-800 border border-gold-500/30 rounded-2xl p-4 flex items-start gap-3.5 text-white shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-white/10 border border-gold-400/40 text-gold-300 flex items-center justify-center shrink-0">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+            <div class="text-xs">
+              <p class="font-bold text-gold-300 text-sm">Senarai Peserta MyDigital Leaders (MDL) Pertengahan</p>
+              <p class="text-slate-200 mt-0.5 leading-relaxed">Peserta yang berstatus <strong class="text-white">Lulus</strong> akan layak secara automatik untuk dicalonkan ke kursus <strong class="text-gold-300">MDL Lanjutan</strong>. Klik butang <em>"Ke Lanjutan ↑"</em> pada baris peserta untuk pendaftaran pantas.</p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs flex flex-wrap items-center justify-between gap-3 no-print">
+            <div class="flex flex-wrap items-center gap-2 flex-1 min-w-[240px]">
+              <div class="relative flex-1 max-w-xs">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input id="searchPertengahan" oninput="renderPertengahan()" type="text" placeholder="Cari nama, No. KP, sekolah, PPD..." class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500">
+              </div>
+              <select id="filterKursusPertengahan" onchange="renderPertengahan()" class="px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white max-w-[220px]">
+                <option value="ALL">Semua Siri Kursus</option>
+              </select>
+              <select id="filterPPDPertengahan" onchange="renderPertengahan()" class="px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white">
+                <option value="ALL">Semua PPD / Daerah</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="exportCSV('pertengahan')" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:border-gold-500 text-obsidian-900 text-xs font-semibold flex items-center gap-1.5">
+                <i data-lucide="download" class="w-3.5 h-3.5 text-gold-600"></i> Eksport CSV
+              </button>
+              <button onclick="openPertengahanModal()" class="px-4 py-2 rounded-xl bg-royal-800 hover:bg-royal-900 text-white border border-gold-500/30 text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                <i data-lucide="user-plus" class="w-4 h-4 text-gold-400"></i> Daftar Peserta Pertengahan
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden print-card">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead class="bg-obsidian-950 border-b border-gold-500/30 text-[11px] uppercase tracking-wider text-gold-300">
+                  <tr>
+                    <th class="py-3.5 px-4">Nama &amp; No. KP</th>
+                    <th class="py-3.5 px-4">Jawatan &amp; Gred</th>
+                    <th class="py-3.5 px-4">Sekolah / Organisasi &amp; PPD</th>
+                    <th class="py-3.5 px-4">Siri Kursus &amp; Tahun</th>
+                    <th class="py-3.5 px-4 text-center">Status &amp; Progresif</th>
+                    <th class="py-3.5 px-4 text-right no-print">Tindakan</th>
+                  </tr>
+                </thead>
+                <tbody id="tablePertengahanBody" class="divide-y divide-slate-100 text-xs"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 4: PESERTA MDL LANJUTAN ==================== -->
+        <section id="tab-lanjutan" class="tab-section hidden space-y-5 fade-in">
+          <div class="bg-gradient-to-r from-obsidian-950 via-obsidian-900 to-royal-950 border border-gold-500/50 rounded-2xl p-4 flex items-start gap-3.5 text-white shadow-sm">
+            <div class="w-10 h-10 rounded-xl gold-gradient text-obsidian-950 flex items-center justify-center shrink-0 shadow-xs">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <div class="text-xs">
+              <p class="font-bold text-gold-400 text-sm">Pengesahan Syarat Wajib MDL Lanjutan</p>
+              <p class="text-slate-300 mt-0.5 leading-relaxed">Hanya peserta yang telah berjaya menamatkan kursus <strong class="text-white">MDL Pertengahan</strong> dibenarkan mendaftar ke <strong class="text-gold-300">MDL Lanjutan</strong>. Sistem memautkan rekod Pertengahan peserta secara automatik bagi tujuan audit dan pemantauan CPD JKTD.</p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs flex flex-wrap items-center justify-between gap-3 no-print">
+            <div class="flex flex-wrap items-center gap-2 flex-1 min-w-[240px]">
+              <div class="relative flex-1 max-w-xs">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input id="searchLanjutan" oninput="renderLanjutan()" type="text" placeholder="Cari nama, No. KP, sekolah, PPD..." class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500">
+              </div>
+              <select id="filterKursusLanjutan" onchange="renderLanjutan()" class="px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white max-w-[220px]">
+                <option value="ALL">Semua Siri Kursus Lanjutan</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="exportCSV('lanjutan')" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:border-gold-500 text-obsidian-900 text-xs font-semibold flex items-center gap-1.5">
+                <i data-lucide="download" class="w-3.5 h-3.5 text-gold-600"></i> Eksport CSV
+              </button>
+              <button onclick="openLanjutanModal()" class="px-4 py-2 rounded-xl gold-gradient text-obsidian-950 text-xs font-extrabold flex items-center gap-1.5 shadow-sm hover:brightness-105 transition-all">
+                <i data-lucide="award" class="w-4 h-4"></i> Daftar Peserta MDL Lanjutan
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden print-card">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead class="bg-obsidian-950 border-b border-gold-500/30 text-[11px] uppercase tracking-wider text-gold-300">
+                  <tr>
+                    <th class="py-3.5 px-4">Nama &amp; No. KP</th>
+                    <th class="py-3.5 px-4">Jawatan &amp; Sekolah / PPD</th>
+                    <th class="py-3.5 px-4">Rekod MDL Pertengahan (Asal)</th>
+                    <th class="py-3.5 px-4">Siri MDL Lanjutan</th>
+                    <th class="py-3.5 px-4 text-center">Status Lanjutan</th>
+                    <th class="py-3.5 px-4 text-right no-print">Tindakan</th>
+                  </tr>
+                </thead>
+                <tbody id="tableLanjutanBody" class="divide-y divide-slate-100 text-xs"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 5: PERUNTUKAN KEWANGAN ==================== -->
+        <section id="tab-kewangan" class="tab-section hidden space-y-5 fade-in">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-obsidian-950 rounded-2xl p-4 border border-gold-500/30 shadow-sm text-white print-card">
+              <p class="text-[11px] font-bold uppercase tracking-wider text-gold-400">Jumlah Peruntukan Diluluskan</p>
+              <h3 id="finTotalPeruntukan" class="text-2xl font-extrabold text-white mt-1.5">RM 0.00</h3>
+            </div>
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs gold-border-top print-card">
+              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Jumlah Perbelanjaan Sebenar</p>
+              <h3 id="finTotalBelanja" class="text-2xl font-extrabold text-royal-800 mt-1.5">RM 0.00</h3>
+            </div>
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs gold-border-top print-card">
+              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Baki Peruntukan</p>
+              <h3 id="finTotalBaki" class="text-2xl font-extrabold text-obsidian-950 mt-1.5">RM 0.00</h3>
+            </div>
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs gold-border-top print-card">
+              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Purata Kos / Peserta</p>
+              <h3 id="finKosPeserta" class="text-2xl font-extrabold text-gold-700 mt-1.5">RM 0.00</h3>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 no-print">
+            <h4 class="font-bold text-obsidian-950 text-sm">Pecahan Peruntukan &amp; Perbelanjaan Mengikut Kursus</h4>
+            <button onclick="exportCSV('kewangan')" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:border-gold-500 text-obsidian-900 text-xs font-semibold flex items-center gap-1.5">
+              <i data-lucide="download" class="w-3.5 h-3.5 text-gold-600"></i> Eksport Laporan Kewangan (CSV)
+            </button>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden print-card">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead class="bg-obsidian-950 border-b border-gold-500/30 text-[11px] uppercase tracking-wider text-gold-300">
+                  <tr>
+                    <th class="py-3.5 px-4">Kod &amp; Kursus</th>
+                    <th class="py-3.5 px-4">Tahun</th>
+                    <th class="py-3.5 px-4 text-right">Peruntukan (RM)</th>
+                    <th class="py-3.5 px-4 text-right">Perbelanjaan (RM)</th>
+                    <th class="py-3.5 px-4 text-right">Baki (RM)</th>
+                    <th class="py-3.5 px-4">Prestasi (%)</th>
+                    <th class="py-3.5 px-4">No. LO / Catatan</th>
+                    <th class="py-3.5 px-4 text-right no-print">Kemaskini</th>
+                  </tr>
+                </thead>
+                <tbody id="tableKewanganBody" class="divide-y divide-slate-100 text-xs"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== MODAL 1: TAMBAH / EDIT KURSUS ==================== -->
+  <div id="courseModal" class="fixed inset-0 z-50 bg-obsidian-950/70 backdrop-blur-sm hidden items-center justify-center p-4 no-print">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-gold-500/40 overflow-hidden fade-in max-h-[92vh] flex flex-col">
+      <div class="px-6 py-4 border-b border-gold-500/30 flex items-center justify-between hero-gradient text-white">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="calendar-plus" class="w-5 h-5 text-gold-400"></i>
+          <h3 id="courseModalTitle" class="font-bold text-base">Tambah Kursus CPD Baharu</h3>
+        </div>
+        <button onclick="closeModal('courseModal')" class="text-slate-300 hover:text-gold-400 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="courseForm" onsubmit="saveCourse(event)" class="p-6 space-y-4 overflow-y-auto text-xs">
+        <input type="hidden" id="cId">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Kod Kursus *</label>
+            <input id="cKod" required type="text" placeholder="cth: JKTD-MDL-P01/27" class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500">
+          </div>
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Kategori MDL *</label>
+            <select id="cKategori" required class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white">
+              <option value="MDL Pertengahan">MDL Pertengahan</option>
+              <option value="MDL Lanjutan">MDL Lanjutan</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Tahun *</label>
+            <select id="cTahun" required class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white">
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+              <option value="2027" selected>2027</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-obsidian-900 mb-1">Nama Kursus *</label>
+          <input id="cNama" required type="text" placeholder="cth: Kursus MyDigital Leaders (MDL) Pertengahan Siri 1/2027" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Tarikh Mula *</label>
+            <input id="cTarikhMula" required type="date" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+          </div>
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Tarikh Tamat *</label>
+            <input id="cTarikhTamat" required type="date" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Tempat Pelaksanaan *</label>
+            <input id="cTempat" required type="text" placeholder="cth: IAB Cawangan Sabah, Kota Kinabalu" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+          </div>
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Sasaran Peserta *</label>
+            <input id="cSasaran" required type="text" placeholder="cth: Pengetua &amp; Guru Besar (PGB) Sabah" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Kuota Bilangan Peserta *</label>
+            <input id="cKuota" required type="number" min="1" value="35" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+          </div>
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Tenaga Pengajar (JKTD) *</label>
+            <input id="cPengajar" required type="text" placeholder="cth: Dr. Mohd Azlan Kassim, Pn. Dayang Nurul Huda" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-slate-200">
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Peruntukan Diluluskan (RM)</label>
+            <input id="cPeruntukan" required type="number" step="0.01" min="0" value="15000" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+          </div>
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Perbelanjaan Sebenar (RM)</label>
+            <input id="cBelanja" required type="number" step="0.01" min="0" value="0" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+          </div>
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">No. LO / Catatan Kewangan</label>
+            <input id="cNoLO" type="text" placeholder="cth: LO-2027-0142" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-4 border-t border-slate-200">
+          <button type="button" onclick="closeModal('courseModal')" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-royal-800 hover:bg-royal-900 text-white font-bold border border-gold-500/30">Simpan Kursus</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 2: TAMBAH / EDIT PESERTA PERTENGAHAN ==================== -->
+  <div id="pertengahanModal" class="fixed inset-0 z-50 bg-obsidian-950/70 backdrop-blur-sm hidden items-center justify-center p-4 no-print">
+    <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-gold-500/40 overflow-hidden fade-in max-h-[92vh] flex flex-col">
+      <div class="px-6 py-4 border-b border-gold-500/30 flex items-center justify-between hero-gradient text-white">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="user-plus" class="w-5 h-5 text-gold-400"></i>
+          <h3 id="pertengahanModalTitle" class="font-bold text-base">Daftar Peserta MDL Pertengahan</h3>
+        </div>
+        <button onclick="closeModal('pertengahanModal')" class="text-slate-300 hover:text-gold-400 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="pertengahanForm" onsubmit="savePertengahan(event)" class="p-6 space-y-4 overflow-y-auto text-xs">
+        <input type="hidden" id="pId">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Nama Penuh *</label>
+            <input id="pNama" required type="text" placeholder="cth: Ahmad bin Abdullah" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+          </div>
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">No. Kad Pengenalan *</label>
+            <input id="pIC" required type="text" placeholder="cth: 780512-12-5431" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Jawatan *</label>
+            <select id="pJawatan" required class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white">
+              <option value="Pengetua">Pengetua</option>
+              <option value="Guru Besar">Guru Besar</option>
+              <option value="Penolong Kanan Pentadbiran">Penolong Kanan Pentadbiran</option>
+              <option value="Penolong Kanan HEM">Penolong Kanan HEM</option>
+              <option value="Penolong Kanan Kokurikulum">Penolong Kanan Kokurikulum</option>
+              <option value="Pegawai PPD / SIPartners+">Pegawai PPD / SIPartners+</option>
+              <option value="Ketua Bidang / Guru Kanan">Ketua Bidang / Guru Kanan</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Gred *</label>
+            <select id="pGred" required class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white">
+              <option value="DG44">DG44</option>
+              <option value="DG48">DG48</option>
+              <option value="DG52">DG52</option>
+              <option value="DG54">DG54</option>
+              <option value="JUSA C">JUSA C</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Sekolah / Organisasi *</label>
+            <input id="pSekolah" required type="text" placeholder="cth: SMK All Saints, Kota Kinabalu" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+          </div>
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">PPD / Daerah *</label>
+            <select id="pPPD" required class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white">
+              <option value="PPD Kota Kinabalu">PPD Kota Kinabalu</option>
+              <option value="PPD Penampang">PPD Penampang</option>
+              <option value="PPD Tuaran">PPD Tuaran</option>
+              <option value="PPD Papar">PPD Papar</option>
+              <option value="PPD Sandakan">PPD Sandakan</option>
+              <option value="PPD Tawau">PPD Tawau</option>
+              <option value="PPD Lahad Datu">PPD Lahad Datu</option>
+              <option value="PPD Keningau">PPD Keningau</option>
+              <option value="PPD Kudat">PPD Kudat</option>
+              <option value="PPD Beaufort">PPD Beaufort</option>
+              <option value="PPD Ranau">PPD Ranau</option>
+              <option value="PPD Semporna">PPD Semporna</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Siri Kursus MDL Pertengahan *</label>
+            <select id="pCourseId" required class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white"></select>
+          </div>
+          <div>
+            <label class="block font-bold text-obsidian-900 mb-1">Status Kursus *</label>
+            <select id="pStatus" required class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white">
+              <option value="Lulus">Lulus (Layak ke Lanjutan)</option>
+              <option value="Sedang Berjalan">Sedang Berjalan</option>
+              <option value="Tidak Hadir">Tidak Hadir</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-4 border-t border-slate-200">
+          <button type="button" onclick="closeModal('pertengahanModal')" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-royal-800 hover:bg-royal-900 text-white font-bold border border-gold-500/30">Simpan Peserta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 3: DAFTAR PESERTA MDL LANJUTAN ==================== -->
+  <div id="lanjutanModal" class="fixed inset-0 z-50 bg-obsidian-950/70 backdrop-blur-sm hidden items-center justify-center p-4 no-print">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-gold-500/50 overflow-hidden fade-in">
+      <div class="px-6 py-4 border-b border-gold-500/30 flex items-center justify-between bg-obsidian-950 text-white">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="award" class="w-5 h-5 text-gold-400"></i>
+          <h3 class="font-bold text-base text-gold-300">Daftar Peserta MDL Lanjutan</h3>
+        </div>
+        <button onclick="closeModal('lanjutanModal')" class="text-slate-300 hover:text-gold-400 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="lanjutanForm" onsubmit="saveLanjutan(event)" class="p-6 space-y-4 text-xs">
+        <div class="p-3.5 rounded-xl bg-gold-50 border border-gold-400/50 text-obsidian-900 text-[11px] leading-relaxed">
+          Senarai di bawah hanya memaparkan <strong>alumni MDL Pertengahan (Lulus)</strong> yang belum berdaftar dalam kursus MDL Lanjutan.
+        </div>
+
+        <div>
+          <label class="block font-bold text-obsidian-900 mb-1">Pilih Alumni MDL Pertengahan yang Layak *</label>
+          <select id="lParticipantId" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-white"></select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-obsidian-900 mb-1">Pilih Siri Kursus MDL Lanjutan *</label>
+          <select id="lCourseId" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-white"></select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-obsidian-900 mb-1">Status Penyertaan Lanjutan *</label>
+          <select id="lStatus" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-white">
+            <option value="Lulus">Lulus (Tamat Lanjutan)</option>
+            <option value="Berdaftar">Berdaftar / Akan Hadir</option>
+            <option value="Tidak Hadir">Tidak Hadir</option>
+          </select>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-4 border-t border-slate-200">
+          <button type="button" onclick="closeModal('lanjutanModal')" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50">Batal</button>
+          <button type="submit" id="btnSubmitLanjutan" class="px-5 py-2 rounded-xl gold-gradient text-obsidian-950 font-extrabold hover:brightness-105">Sahkan Pendaftaran</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 4: KEMASKINI KEWANGAN ==================== -->
+  <div id="financeModal" class="fixed inset-0 z-50 bg-obsidian-950/70 backdrop-blur-sm hidden items-center justify-center p-4 no-print">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-gold-500/40 overflow-hidden fade-in">
+      <div class="px-6 py-4 border-b border-gold-500/30 flex items-center justify-between hero-gradient text-white">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="wallet" class="w-5 h-5 text-gold-400"></i>
+          <h3 class="font-bold text-base">Kemaskini Kewangan Kursus</h3>
+        </div>
+        <button onclick="closeModal('financeModal')" class="text-slate-300 hover:text-gold-400 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="saveFinance(event)" class="p-6 space-y-4 text-xs">
+        <input type="hidden" id="fCourseId">
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <p id="fCourseLabel" class="font-bold text-obsidian-950"></p>
+        </div>
+        <div>
+          <label class="block font-bold text-obsidian-900 mb-1">Peruntukan Diluluskan (RM) *</label>
+          <input id="fPeruntukan" required type="number" step="0.01" min="0" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+        </div>
+        <div>
+          <label class="block font-bold text-obsidian-900 mb-1">Perbelanjaan Sebenar Digunakan (RM) *</label>
+          <input id="fBelanja" required type="number" step="0.01" min="0" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+        </div>
+        <div>
+          <label class="block font-bold text-obsidian-900 mb-1">No. Pesanan Kerajaan (LO) / Catatan</label>
+          <input id="fNoLO" type="text" placeholder="cth: LO-2027-0891 (Makan, Bahan &amp; Penginapan)" class="w-full px-3 py-2 rounded-xl border border-slate-300">
+        </div>
+        <div class="flex justify-end gap-2 pt-4 border-t border-slate-200">
+          <button type="button" onclick="closeModal('financeModal')" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-royal-800 hover:bg-royal-900 text-white font-bold border border-gold-500/30">Simpan Rekod</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 5: PENGESAHAN PADAM ==================== -->
+  <div id="confirmModal" class="fixed inset-0 z-50 bg-obsidian-950/70 backdrop-blur-sm hidden items-center justify-center p-4 no-print">
+    <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-gold-500/40 p-6 text-center space-y-4 fade-in">
+      <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h3 id="confirmTitle" class="font-bold text-obsidian-950 text-base">Sahkan Tindakan</h3>
+        <p id="confirmMessage" class="text-xs text-slate-500 mt-1"></p>
+      </div>
+      <div class="flex justify-center gap-2 pt-2">
+        <button onclick="closeModal('confirmModal')" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50">Batal</button>
+        <button id="confirmActionBtn" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold">Ya, Teruskan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT APLIKASI & INTEGRASI APPS SCRIPT ==================== -->
+  <script>
+    /*************************************************************************
+     * 1. KONFIGURASI & DATA AWAL (2024 – 2027) - JKTD IAB CAWANGAN SABAH
+     *************************************************************************/
+    const STORAGE_KEY = 'JKTD_IAB_SABAH_CPD_DB_V1';
+    const isGasEnvironment = (typeof google !== 'undefined' && google.script && google.script.run);
+
+    let state = {
+      activeTab: 'dashboard',
+      yearFilter: 'ALL',
+      courses: [],
+      participants: []
+    };
+
+    let chartPesertaInstance = null;
+    let chartKewanganInstance = null;
+    let networkAnimId = null;
+
+    const INITIAL_DATA = {
+      courses: [
+        // --- TAHUN 2024 ---
+        {
+          id: 'CRS-2024-P1',
+          kod: 'JKTD-MDL-P01/24',
+          nama: 'Kursus MyDigital Leaders (MDL) Pertengahan Siri 1/2024',
+          kategori: 'MDL Pertengahan',
+          tahun: '2024',
+          tarikhMula: '2024-03-18',
+          tarikhTamat: '2024-03-21',
+          tempat: 'IAB Cawangan Sabah, Kota Kinabalu',
+          sasaran: 'Pengetua & Guru Besar (Zon Pantai Barat)',
+          kuota: 35,
+          pengajar: 'Dr. Mohd Azlan bin Kassim, Pn. Dayang Nurul Huda binti Awang',
+          peruntukan: 18500,
+          belanja: 17420,
+          noLO: 'LO-2024-0118 (Makan/Minum & Bahan)'
+        },
+        {
+          id: 'CRS-2024-P2',
+          kod: 'JKTD-MDL-P02/24',
+          nama: 'Kursus MyDigital Leaders (MDL) Pertengahan Siri 2/2024',
+          kategori: 'MDL Pertengahan',
+          tahun: '2024',
+          tarikhMula: '2024-07-08',
+          tarikhTamat: '2024-07-11',
+          tempat: 'Hotel Promenade, Tawau',
+          sasaran: 'Pengetua, Guru Besar & PK (Zon Tenggara)',
+          kuota: 30,
+          pengajar: 'En. Razali bin Mamat, En. Sylvester Anak Janting',
+          peruntukan: 22000,
+          belanja: 21350,
+          noLO: 'LO-2024-0452 (Pakej Hotel & Bahan)'
+        },
+        {
+          id: 'CRS-2024-L1',
+          kod: 'JKTD-MDL-L01/24',
+          nama: 'Kursus MyDigital Leaders (MDL) Lanjutan Siri 1/2024',
+          kategori: 'MDL Lanjutan',
+          tahun: '2024',
+          tarikhMula: '2024-10-14',
+          tarikhTamat: '2024-10-17',
+          tempat: 'IAB Cawangan Sabah, Kota Kinabalu',
+          sasaran: 'Alumni MDL Pertengahan (PGB & PK)',
+          kuota: 30,
+          pengajar: 'Dr. Mohd Azlan bin Kassim, Dr. Siti Aminah binti Rahman',
+          peruntukan: 19000,
+          belanja: 18100,
+          noLO: 'LO-2024-0789 (Makan/Minum & Cetakan)'
+        },
+        // --- TAHUN 2025 ---
+        {
+          id: 'CRS-2025-P1',
+          kod: 'JKTD-MDL-P01/25',
+          nama: 'Kursus MyDigital Leaders (MDL) Pertengahan Siri 1/2025',
+          kategori: 'MDL Pertengahan',
+          tahun: '2025',
+          tarikhMula: '2025-02-24',
+          tarikhTamat: '2025-02-27',
+          tempat: 'Dewan Kuliah Utama, PPD Sandakan',
+          sasaran: 'Pengetua & Guru Besar (Zon Sandakan)',
+          kuota: 35,
+          pengajar: 'Pn. Dayang Nurul Huda binti Awang, Pn. Rosmawati binti Salleh',
+          peruntukan: 21000,
+          belanja: 19850,
+          noLO: 'LO-2025-0094 (Penginapan & Makan)'
+        },
+        {
+          id: 'CRS-2025-L1',
+          kod: 'JKTD-MDL-L01/25',
+          nama: 'Kursus MyDigital Leaders (MDL) Lanjutan Siri 1/2025',
+          kategori: 'MDL Lanjutan',
+          tahun: '2025',
+          tarikhMula: '2025-06-16',
+          tarikhTamat: '2025-06-19',
+          tempat: 'IAB Cawangan Sabah, Kota Kinabalu',
+          sasaran: 'Alumni MDL Pertengahan 2024/2025',
+          kuota: 30,
+          pengajar: 'Dr. Siti Aminah binti Rahman, En. Razali bin Mamat',
+          peruntukan: 20000,
+          belanja: 19240,
+          noLO: 'LO-2025-0341 (Makan/Minum & Modul AI)'
+        },
+        {
+          id: 'CRS-2025-P2',
+          kod: 'JKTD-MDL-P02/25',
+          nama: 'Kursus MyDigital Leaders (MDL) Pertengahan Siri 2/2025',
+          kategori: 'MDL Pertengahan',
+          tahun: '2025',
+          tarikhMula: '2025-09-08',
+          tarikhTamat: '2025-09-11',
+          tempat: 'Hotel Perkasa, Keningau',
+          sasaran: 'PGB & Pegawai PPD (Zon Pedalaman)',
+          kuota: 30,
+          pengajar: 'En. Sylvester Anak Janting, Dr. Mohd Azlan bin Kassim',
+          peruntukan: 23500,
+          belanja: 22100,
+          noLO: 'LO-2025-0612 (Pakej Hotel & Pengangkutan)'
+        },
+        // --- TAHUN 2026 ---
+        {
+          id: 'CRS-2026-P1',
+          kod: 'JKTD-MDL-P01/26',
+          nama: 'Kursus MyDigital Leaders (MDL) Pertengahan Siri 1/2026',
+          kategori: 'MDL Pertengahan',
+          tahun: '2026',
+          tarikhMula: '2026-03-09',
+          tarikhTamat: '2026-03-12',
+          tempat: 'IAB Cawangan Sabah, Kota Kinabalu',
+          sasaran: 'Pengetua, Guru Besar & PK Pentadbiran',
+          kuota: 40,
+          pengajar: 'Dr. Mohd Azlan bin Kassim, Pn. Rosmawati binti Salleh',
+          peruntukan: 24000,
+          belanja: 22650,
+          noLO: 'LO-2026-0105 (Makan/Minum & Kit Digital)'
+        },
+        {
+          id: 'CRS-2026-L1',
+          kod: 'JKTD-MDL-L01/26',
+          nama: 'Kursus MyDigital Leaders (MDL) Lanjutan Siri 1/2026',
+          kategori: 'MDL Lanjutan',
+          tahun: '2026',
+          tarikhMula: '2026-08-17',
+          tarikhTamat: '2026-08-20',
+          tempat: 'Hotel Grandis, Kota Kinabalu',
+          sasaran: 'Alumni MDL Pertengahan 2024–2026',
+          kuota: 35,
+          pengajar: 'Dr. Siti Aminah binti Rahman, Pn. Dayang Nurul Huda binti Awang',
+          peruntukan: 26500,
+          belanja: 24800,
+          noLO: 'LO-2026-0519 (Pakej Seminar & Bengkel AI)'
+        }
+      ],
+      participants: [
+        {
+          id: 'P-001', nama: 'Datuk Hj. Awang Besar bin Hj. Salleh', ic: '720415-12-5109',
+          jawatan: 'Pengetua', gred: 'DG54', sekolah: 'SMK All Saints', ppd: 'PPD Kota Kinabalu',
+          pertengahanCourseId: 'CRS-2024-P1', pertengahanStatus: 'Lulus',
+          lanjutanCourseId: 'CRS-2024-L1', lanjutanStatus: 'Lulus'
+        },
+        {
+          id: 'P-002', nama: 'Pn. Marylyn binti Majid', ic: '750922-12-5482',
+          jawatan: 'Guru Besar', gred: 'DG48', sekolah: 'SK Likas', ppd: 'PPD Kota Kinabalu',
+          pertengahanCourseId: 'CRS-2024-P1', pertengahanStatus: 'Lulus',
+          lanjutanCourseId: 'CRS-2024-L1', lanjutanStatus: 'Lulus'
+        },
+        {
+          id: 'P-003', nama: 'En. Junaidi bin Mohd Yusof', ic: '771103-12-5021',
+          jawatan: 'Penolong Kanan Pentadbiran', gred: 'DG48', sekolah: 'SMK St. Michael', ppd: 'PPD Penampang',
+          pertengahanCourseId: 'CRS-2024-P1', pertengahanStatus: 'Lulus',
+          lanjutanCourseId: 'CRS-2025-L1', lanjutanStatus: 'Lulus'
+        },
+        {
+          id: 'P-004', nama: 'Pn. Faridah binti Hassan', ic: '760218-12-5314',
+          jawatan: 'Pengetua', gred: 'DG52', sekolah: 'SMK Tawau', ppd: 'PPD Tawau',
+          pertengahanCourseId: 'CRS-2024-P2', pertengahanStatus: 'Lulus',
+          lanjutanCourseId: 'CRS-2025-L1', lanjutanStatus: 'Lulus'
+        },
+        {
+          id: 'P-005', nama: 'En. Abdul Rahman bin Ismail', ic: '790630-12-5715',
+          jawatan: 'Guru Besar', gred: 'DG44', sekolah: 'SK Pekan Lahad Datu', ppd: 'PPD Lahad Datu',
+          pertengahanCourseId: 'CRS-2024-P2', pertengahanStatus: 'Lulus',
+          lanjutanCourseId: null, lanjutanStatus: null
+        },
+        {
+          id: 'P-006', nama: 'Pn. Chong Siew Ling', ic: '740811-12-5220',
+          jawatan: 'Pengetua', gred: 'DG54', sekolah: 'SMK Sung Siew', ppd: 'PPD Sandakan',
+          pertengahanCourseId: 'CRS-2025-P1', pertengahanStatus: 'Lulus',
+          lanjutanCourseId: 'CRS-2025-L1', lanjutanStatus: 'Lulus'
+        },
+        {
+          id: 'P-007', nama: 'En. Mohd Firdaus bin Karim', ic: '810325-12-5643',
+          jawatan: 'Pegawai PPD / SIPartners+', gred: 'DG48', sekolah: 'Pejabat Pendidikan Daerah Sandakan', ppd: 'PPD Sandakan',
+          pertengahanCourseId: 'CRS-2025-P1', pertengahanStatus: 'Lulus',
+          lanjutanCourseId: 'CRS-2026-L1', lanjutanStatus: 'Lulus'
+        },
+        {
+          id: 'P-008', nama: 'Pn. Veronica Anak Paulus', ic: '781209-12-5908',
+          jawatan: 'Guru Besar', gred: 'DG48', sekolah: 'SK Pekan Keningau', ppd: 'PPD Keningau',
+          pertengahanCourseId: 'CRS-2025-P2', pertengahanStatus: 'Lulus',
+          lanjutanCourseId: 'CRS-2026-L1', lanjutanStatus: 'Lulus'
+        },
+        {
+          id: 'P-009', nama: 'En. Peter bin Gundoh', ic: '760714-12-5187',
+          jawatan: 'Penolong Kanan HEM', gred: 'DG48', sekolah: 'SMK Keningau II', ppd: 'PPD Keningau',
+          pertengahanCourseId: 'CRS-2025-P2', pertengahanStatus: 'Lulus',
+          lanjutanCourseId: null, lanjutanStatus: null
+        },
+        {
+          id: 'P-010', nama: 'Pn. Hjh. Salmah binti Ag. Besar', ic: '730520-12-5046',
+          jawatan: 'Pengetua', gred: 'DG54', sekolah: 'SM Sains Sabah', ppd: 'PPD Tuaran',
+          pertengahanCourseId: 'CRS-2026-P1', pertengahanStatus: 'Lulus',
+          lanjutanCourseId: 'CRS-2026-L1', lanjutanStatus: 'Lulus'
+        },
+        {
+          id: 'P-011', nama: 'En. Roslan bin Matali', ic: '800918-12-5511',
+          jawatan: 'Guru Besar', gred: 'DG48', sekolah: 'SK Tanjung Aru II', ppd: 'PPD Kota Kinabalu',
+          pertengahanCourseId: 'CRS-2026-P1', pertengahanStatus: 'Lulus',
+          lanjutanCourseId: null, lanjutanStatus: null
+        },
+        {
+          id: 'P-012', nama: 'Pn. Nurul Aina binti Zulkifli', ic: '830104-12-5392',
+          jawatan: 'Penolong Kanan Pentadbiran', gred: 'DG44', sekolah: 'SMK Beaufort', ppd: 'PPD Beaufort',
+          pertengahanCourseId: 'CRS-2026-P1', pertengahanStatus: 'Lulus',
+          lanjutanCourseId: null, lanjutanStatus: null
+        }
+      ]
+    };
+
+    /*************************************************************************
+     * 2. KAWALAN MUKA HADAPAN PORTAL (HALAMAN PERTAMA)
+     *************************************************************************/
+    function handleBannerLoad() {
+      document.getElementById('landingBannerImg').classList.remove('hidden');
+      document.getElementById('bannerBottomScrim').classList.remove('hidden');
+      document.getElementById('landingBannerSpacer').classList.remove('hidden');
+      document.getElementById('landingFallbackBg').classList.add('hidden');
+      document.getElementById('landingFallbackHero').classList.add('hidden');
+      stopDigitalNetwork();
+    }
+
+    function handleBannerError() {
+      document.getElementById('landingBannerImg').classList.add('hidden');
+      document.getElementById('bannerBottomScrim').classList.add('hidden');
+      document.getElementById('landingBannerSpacer').classList.add('hidden');
+      document.getElementById('landingFallbackBg').classList.remove('hidden');
+      document.getElementById('landingFallbackHero').classList.remove('hidden');
+      startDigitalNetwork();
+    }
+
+    function enterPortal() {
+      stopDigitalNetwork();
+      document.getElementById('portalLanding').classList.add('hidden');
+      document.getElementById('mainAppContainer').classList.remove('hidden');
+      renderAll();
+    }
+
+    function returnToLanding() {
+      toggleMobileSidebar(false);
+      document.getElementById('mainAppContainer').classList.add('hidden');
+      document.getElementById('portalLanding').classList.remove('hidden');
+      updateLandingStats();
+      if (!document.getElementById('landingFallbackBg').classList.contains('hidden')) {
+        startDigitalNetwork();
+      }
+      lucide.createIcons();
+    }
+
+    function updateLandingStats() {
+      const elK = document.getElementById('landingStatKursus');
+      const elP = document.getElementById('landingStatPertengahan');
+      const elL = document.getElementById('landingStatLanjutan');
+      if (elK) elK.textContent = state.courses.length;
+      if (elP) elP.textContent = state.participants.length;
+      if (elL) elL.textContent = state.participants.filter(p => p.lanjutanCourseId).length;
+    }
+
+    /* Animasi Kanvas Rangkaian Digital Halus untuk Mod Fallback */
+    function startDigitalNetwork() {
+      const canvas = document.getElementById('digitalNetworkCanvas');
+      if (!canvas) return;
+      stopDigitalNetwork();
+
+      const ctx = canvas.getContext('2d');
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      const nodeCount = Math.min(48, Math.floor((width * height) / 28000));
+      const nodes = Array.from({ length: nodeCount }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.45,
+        vy: (Math.random() - 0.5) * 0.45,
+        r: Math.random() * 2 + 1.2,
+        isGold: Math.random() > 0.65
+      }));
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+        for (let i = 0; i < nodes.length; i++) {
+          const n = nodes[i];
+          n.x += n.vx;
+          n.y += n.vy;
+          if (n.x < 0 || n.x > width) n.vx *= -1;
+          if (n.y < 0 || n.y > height) n.vy *= -1;
+
+          for (let j = i + 1; j < nodes.length; j++) {
+            const m = nodes[j];
+            const dx = n.x - m.x;
+            const dy = n.y - m.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 145) {
+              ctx.beginPath();
+              ctx.moveTo(n.x, n.y);
+              ctx.lineTo(m.x, m.y);
+              const alpha = (1 - dist / 145) * 0.25;
+              ctx.strokeStyle = (n.isGold || m.isGold)
+                ? `rgba(212, 175, 55, ${alpha})`
+                : `rgba(59, 130, 246, ${alpha})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
+          }
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+          ctx.fillStyle = n.isGold ? 'rgba(229, 193, 88, 0.85)' : 'rgba(96, 165, 250, 0.8)';
+          ctx.fill();
+        }
+        networkAnimId = requestAnimationFrame(draw);
+      }
+
+      draw();
+    }
+
+    function stopDigitalNetwork() {
+      if (networkAnimId) {
+        cancelAnimationFrame(networkAnimId);
+        networkAnimId = null;
+      }
+    }
+
+    /*************************************************************************
+     * 3. LAPISAN DATA (LOCALSTORAGE & GOOGLE APPS SCRIPT BRIDGE)
+     *************************************************************************/
+    function initApp() {
+      const envBadge = document.getElementById('envBadge');
+      const envText = document.getElementById('envBadgeText');
+      if (isGasEnvironment) {
+        envBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-gold-400 shrink-0"></span><span class="text-gold-300 truncate font-semibold">Google Apps Script Aktif</span>`;
+      } else {
+        envText.textContent = 'Mod Pratonton (LocalStorage)';
+      }
+
+      loadData();
+    }
+
+    function loadData() {
+      if (isGasEnvironment) {
+        google.script.run
+          .withSuccessHandler(function(response) {
+            try {
+              const parsed = typeof response === 'string' ? JSON.parse(response) : response;
+              if (parsed && Array.isArray(parsed.courses) && parsed.courses.length > 0) {
+                state.courses = parsed.courses;
+                state.participants = parsed.participants || [];
+              } else {
+                state.courses = JSON.parse(JSON.stringify(INITIAL_DATA.courses));
+                state.participants = JSON.parse(JSON.stringify(INITIAL_DATA.participants));
+                persistData();
+              }
+              renderAll();
+            } catch (err) {
+              showToast('Ralat memproses data Google Sheets.', 'error');
+              fallbackLocalLoad();
+            }
+          })
+          .withFailureHandler(function(err) {
+            showToast('Gagal menyambung ke Google Sheets: ' + err.message, 'error');
+            fallbackLocalLoad();
+          })
+          .getAllData();
+      } else {
+        fallbackLocalLoad();
+      }
+    }
+
+    function fallbackLocalLoad() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          state.courses = parsed.courses || [];
+          state.participants = parsed.participants || [];
+        } else {
+          state.courses = JSON.parse(JSON.stringify(INITIAL_DATA.courses));
+          state.participants = JSON.parse(JSON.stringify(INITIAL_DATA.participants));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            courses: state.courses,
+            participants: state.participants
+          }));
+        }
+      } catch (e) {
+        state.courses = JSON.parse(JSON.stringify(INITIAL_DATA.courses));
+        state.participants = JSON.parse(JSON.stringify(INITIAL_DATA.participants));
+      }
+      renderAll();
+    }
+
+    function persistData() {
+      const payload = {
+        courses: state.courses,
+        participants: state.participants
+      };
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      } catch (e) {
+        console.warn('LocalStorage tidak tersedia:', e);
+      }
+
+      if (isGasEnvironment) {
+        google.script.run
+          .withFailureHandler(function(err) {
+            showToast('Ralat simpan ke Google Sheets: ' + err.message, 'error');
+          })
+          .saveAllData(JSON.stringify(payload));
+      }
+    }
+
+    /*************************************************************************
+     * 4. UTILITI & FUNGSI PEMBANTU
+     *************************************************************************/
+    function formatRM(amount) {
+      const num = parseFloat(amount) || 0;
+      return 'RM ' + num.toLocaleString('ms-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function formatDateMY(dateStr) {
+      if (!dateStr) return '-';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function getCourseById(id) {
+      return state.courses.find(c => c.id === id) || null;
+    }
+
+    function getParticipantCountForCourse(courseId, kategori) {
+      if (kategori === 'MDL Pertengahan') {
+        return state.participants.filter(p => p.pertengahanCourseId === courseId).length;
+      } else {
+        return state.participants.filter(p => p.lanjutanCourseId === courseId).length;
+      }
+    }
+
+    function getFilteredCourses() {
+      if (state.yearFilter === 'ALL') return state.courses;
+      return state.courses.filter(c => String(c.tahun) === String(state.yearFilter));
+    }
+
+    function escapeHTML(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const id = 'toast-' + Date.now();
+      const colors = {
+        success: 'bg-obsidian-950 text-gold-300 border border-gold-500/50',
+        error: 'bg-rose-700 text-white border border-rose-400',
+        info: 'bg-royal-900 text-white border border-royal-500'
+      };
+      const icon = type === 'error' ? 'alert-circle' : (type === 'info' ? 'info' : 'check-circle-2');
+
+      const el = document.createElement('div');
+      el.id = id;
+      el.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-xl text-xs font-semibold fade-in ${colors[type] || colors.info}`;
+      el.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${escapeHTML(message)}</span>`;
+      container.appendChild(el);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => el.remove(), 300);
+      }, 3200);
+    }
+
+    /*************************************************************************
+     * 5. NAVIGASI TAB & PENAPIS TAHUN GLOBAL
+     *************************************************************************/
+    const TAB_META = {
+      dashboard: { title: 'Papan Pemuka Utama', sub: 'Ringkasan prestasi kursus CPD, peserta MDL & kewangan JKTD IAB Sabah' },
+      jadual: { title: 'Jadual Kursus CPD (2024 – 2027)', sub: 'Pengurusan tarikh, tempat, sasaran peserta, bilangan & tenaga pengajar' },
+      pertengahan: { title: 'Peserta MDL Pertengahan', sub: 'Rekod penyertaan kursus MyDigital Leaders peringkat Pertengahan' },
+      lanjutan: { title: 'Peserta MDL Lanjutan', sub: 'Rekod progresif alumni MDL Pertengahan yang mengikuti peringkat Lanjutan' },
+      kewangan: { title: 'Peruntukan & Perbelanjaan Kewangan', sub: 'Pemantauan peruntukan diluluskan, perbelanjaan sebenar & baki setiap kursus' }
+    };
+
+    function switchTab(tabName) {
+      state.activeTab = tabName;
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+      const activeSec = document.getElementById('tab-' + tabName);
+      if (activeSec) activeSec.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        const isCurrent = btn.dataset.tab === tabName;
+        btn.className = isCurrent
+          ? 'nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-royal-800 to-royal-900 text-white border-l-4 border-gold-400 shadow-lg shadow-royal-950/50 transition-all'
+          : 'nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-gold-300 transition-all';
+      });
+
+      document.getElementById('pageTitle').textContent = TAB_META[tabName].title;
+      document.getElementById('pageSubtitle').textContent = TAB_META[tabName].sub;
+
+      toggleMobileSidebar(false);
+      renderAll();
+    }
+
+    function setGlobalYear(year) {
+      state.yearFilter = year;
+      document.querySelectorAll('.year-btn').forEach(btn => {
+        const active = btn.dataset.year === year;
+        btn.className = active
+          ? 'year-btn px-3 py-1.5 rounded-lg text-xs font-extrabold gold-gradient text-obsidian-950 shadow-xs transition-all'
+          : 'year-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-gold-300 transition-all';
+      });
+      renderAll();
+    }
+
+    function toggleMobileSidebar(show) {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (show) {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      }
+    }
+
+    /*************************************************************************
+     * 6. PAPARAN SEMUA MODUL (RENDER ENGINE)
+     *************************************************************************/
+    function renderAll() {
+      updateLandingStats();
+      updateSidebarBadges();
+      populateFilterDropdowns();
+      renderDashboard();
+      renderJadual();
+      renderPertengahan();
+      renderLanjutan();
+      renderKewangan();
+      lucide.createIcons();
+    }
+
+    function updateSidebarBadges() {
+      const fCourses = getFilteredCourses();
+      const courseIds = new Set(fCourses.map(c => c.id));
+      const pCount = state.participants.filter(p => courseIds.has(p.pertengahanCourseId)).length;
+      const lCount = state.participants.filter(p => p.lanjutanCourseId && courseIds.has(p.lanjutanCourseId)).length;
+
+      document.getElementById('badgeJadual').textContent = fCourses.length;
+      document.getElementById('badgePertengahan').textContent = pCount;
+      document.getElementById('badgeLanjutan').textContent = lCount;
+    }
+
+    function populateFilterDropdowns() {
+      const selP = document.getElementById('filterKursusPertengahan');
+      const curP = selP.value;
+      const pCourses = getFilteredCourses().filter(c => c.kategori === 'MDL Pertengahan');
+      selP.innerHTML = '<option value="ALL">Semua Siri Pertengahan</option>' +
+        pCourses.map(c => `<option value="${c.id}">${escapeHTML(c.kod)} (${c.tahun})</option>`).join('');
+      if ([...selP.options].some(o => o.value === curP)) selP.value = curP;
+
+      const selPPD = document.getElementById('filterPPDPertengahan');
+      const curPPD = selPPD.value;
+      const ppds = [...new Set(state.participants.map(p => p.ppd))].sort();
+      selPPD.innerHTML = '<option value="ALL">Semua PPD / Daerah</option>' +
+        ppds.map(d => `<option value="${escapeHTML(d)}">${escapeHTML(d)}</option>`).join('');
+      if ([...selPPD.options].some(o => o.value === curPPD)) selPPD.value = curPPD;
+
+      const selL = document.getElementById('filterKursusLanjutan');
+      const curL = selL.value;
+      const lCourses = getFilteredCourses().filter(c => c.kategori === 'MDL Lanjutan');
+      selL.innerHTML = '<option value="ALL">Semua Siri Lanjutan</option>' +
+        lCourses.map(c => `<option value="${c.id}">${escapeHTML(c.kod)} (${c.tahun})</option>`).join('');
+      if ([...selL.options].some(o => o.value === curL)) selL.value = curL;
+    }
+
+    /* ---------- RENDER TAB 1: DASHBOARD ---------- */
+    function renderDashboard() {
+      const fCourses = getFilteredCourses();
+      const courseIds = new Set(fCourses.map(c => c.id));
+
+      const countP = fCourses.filter(c => c.kategori === 'MDL Pertengahan').length;
+      const countL = fCourses.filter(c => c.kategori === 'MDL Lanjutan').length;
+
+      const pList = state.participants.filter(p => courseIds.has(p.pertengahanCourseId));
+      const pLulus = pList.filter(p => p.pertengahanStatus === 'Lulus').length;
+      const lList = state.participants.filter(p => p.lanjutanCourseId && courseIds.has(p.lanjutanCourseId));
+
+      const totalPeruntukan = fCourses.reduce((s, c) => s + (parseFloat(c.peruntukan) || 0), 0);
+      const totalBelanja = fCourses.reduce((s, c) => s + (parseFloat(c.belanja) || 0), 0);
+      const pctBelanja = totalPeruntukan > 0 ? Math.round((totalBelanja / totalPeruntukan) * 100) : 0;
+
+      const allLulus = state.participants.filter(p => p.pertengahanStatus === 'Lulus').length;
+      const allLanjutan = state.participants.filter(p => p.lanjutanCourseId).length;
+      const pctProgresif = allLulus > 0 ? Math.round((allLanjutan / allLulus) * 100) : 0;
+
+      document.getElementById('kpiTotalKursus').textContent = fCourses.length;
+      document.getElementById('kpiKursusSub').textContent = `${countP} Pertengahan • ${countL} Lanjutan`;
+
+      document.getElementById('kpiTotalPertengahan').textContent = pList.length;
+      document.getElementById('kpiPertengahanSub').textContent = `${pLulus} orang lulus (layak ke Lanjutan)`;
+
+      document.getElementById('kpiTotalLanjutan').textContent = lList.length;
+      document.getElementById('kpiLanjutanSub').textContent = `Kadar progresif keseluruhan: ${pctProgresif}%`;
+
+      document.getElementById('kpiTotalBelanja').textContent = formatRM(totalBelanja);
+      document.getElementById('kpiBelanjaSub').textContent = `Daripada ${formatRM(totalPeruntukan)} (${pctBelanja}%)`;
+
+      const eligible = state.participants.filter(p => p.pertengahanStatus === 'Lulus' && !p.lanjutanCourseId);
+      document.getElementById('badgeCalonLayak').textContent = `${eligible.length} calon`;
+      const elList = document.getElementById('dashboardEligibleList');
+      if (eligible.length === 0) {
+        elList.innerHTML = `<div class="text-center py-6 text-xs text-slate-400">Semua alumni MDL Pertengahan telah mendaftar ke MDL Lanjutan.</div>`;
+      } else {
+        elList.innerHTML = eligible.map(p => {
+          const crs = getCourseById(p.pertengahanCourseId);
+          return `
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-gold-400 transition-colors flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <p class="text-xs font-bold text-obsidian-950 truncate">${escapeHTML(p.nama)}</p>
+                <p class="text-[11px] text-slate-500 truncate">${escapeHTML(p.sekolah)} • ${crs ? crs.tahun : '-'}</p>
+              </div>
+              <button onclick="openLanjutanModal('${p.id}')" class="shrink-0 px-3 py-1.5 rounded-lg gold-gradient text-obsidian-950 text-[11px] font-extrabold hover:brightness-105 no-print">
+                Daftar
+              </button>
+            </div>`;
+        }).join('');
+      }
+
+      const tbody = document.getElementById('dashboardCourseTable');
+      if (fCourses.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400">Tiada rekod kursus bagi tahun dipilih.</td></tr>`;
+      } else {
+        tbody.innerHTML = fCourses.slice(0, 6).map(c => {
+          const bil = getParticipantCountForCourse(c.id, c.kategori);
+          const badgeCls = c.kategori === 'MDL Lanjutan'
+            ? 'bg-gold-50 text-gold-700 border-gold-400/60'
+            : 'bg-royal-50 text-royal-800 border-royal-500/30';
+          return `
+            <tr class="hover:bg-royal-50/40 transition-colors">
+              <td class="py-3 px-3.5">
+                <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold border ${badgeCls} mb-1">${escapeHTML(c.kategori)}</span>
+                <p class="font-bold text-obsidian-950">${escapeHTML(c.kod)}</p>
+              </td>
+              <td class="py-3 px-3.5">
+                <p class="font-semibold text-obsidian-900">${formatDateMY(c.tarikhMula)}</p>
+                <p class="text-[11px] text-slate-500">${escapeHTML(c.tempat)}</p>
+              </td>
+              <td class="py-3 px-3.5">
+                <span class="font-extrabold text-obsidian-950">${bil}</span> <span class="text-slate-400">/ ${c.kuota}</span>
+              </td>
+              <td class="py-3 px-3.5 text-right font-extrabold text-royal-800">${formatRM(c.belanja)}</td>
+            </tr>`;
+        }).join('');
+      }
+
+      renderCharts();
+    }
+
+    function renderCharts() {
+      const years = ['2024', '2025', '2026', '2027'];
+
+      const dataP = years.map(y => {
+        const ids = new Set(state.courses.filter(c => String(c.tahun) === y && c.kategori === 'MDL Pertengahan').map(c => c.id));
+        return state.participants.filter(p => ids.has(p.pertengahanCourseId)).length;
+      });
+      const dataL = years.map(y => {
+        const ids = new Set(state.courses.filter(c => String(c.tahun) === y && c.kategori === 'MDL Lanjutan').map(c => c.id));
+        return state.participants.filter(p => p.lanjutanCourseId && ids.has(p.lanjutanCourseId)).length;
+      });
+
+      const dataPeruntukan = years.map(y => state.courses.filter(c => String(c.tahun) === y).reduce((s, c) => s + (parseFloat(c.peruntukan) || 0), 0));
+      const dataBelanja = years.map(y => state.courses.filter(c => String(c.tahun) === y).reduce((s, c) => s + (parseFloat(c.belanja) || 0), 0));
+
+      const ctxP = document.getElementById('chartPeserta').getContext('2d');
+      if (chartPesertaInstance) chartPesertaInstance.destroy();
+      chartPesertaInstance = new Chart(ctxP, {
+        type: 'bar',
+        data: {
+          labels: years,
+          datasets: [
+            { label: 'MDL Pertengahan', data: dataP, backgroundColor: '#1E3A8A', borderRadius: 8, barPercentage: 0.6 },
+            { label: 'MDL Lanjutan', data: dataL, backgroundColor: '#D4AF37', borderRadius: 8, barPercentage: 0.6 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11, weight: '600' } } } },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false }, ticks: { font: { size: 11, weight: 'bold' } } }
+          }
+        }
+      });
+
+      const ctxK = document.getElementById('chartKewangan').getContext('2d');
+      if (chartKewanganInstance) chartKewanganInstance.destroy();
+      chartKewanganInstance = new Chart(ctxK, {
+        type: 'bar',
+        data: {
+          labels: years,
+          datasets: [
+            { label: 'Peruntukan (RM)', data: dataPeruntukan, backgroundColor: '#0A0E17', borderRadius: 8, barPercentage: 0.65 },
+            { label: 'Perbelanjaan (RM)', data: dataBelanja, backgroundColor: '#D4AF37', borderRadius: 8, barPercentage: 0.65 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11, weight: '600' } } } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: '#f1f5f9' },
+              ticks: { font: { size: 11 }, callback: v => 'RM ' + (v / 1000) + 'k' }
+            },
+            x: { grid: { display: false }, ticks: { font: { size: 11, weight: 'bold' } } }
+          }
+        }
+      });
+    }
+
+    /* ---------- RENDER TAB 2: JADUAL KURSUS ---------- */
+    function renderJadual() {
+      const q = (document.getElementById('searchJadual').value || '').toLowerCase();
+      const kat = document.getElementById('filterKategoriJadual').value;
+
+      let list = getFilteredCourses().filter(c => {
+        if (kat !== 'ALL' && c.kategori !== kat) return false;
+        if (q) {
+          const hay = `${c.kod} ${c.nama} ${c.tempat} ${c.sasaran} ${c.pengajar}`.toLowerCase();
+          return hay.includes(q);
+        }
+        return true;
+      });
+
+      const tbody = document.getElementById('tableJadualBody');
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-10 text-center text-slate-400">Tiada kursus dijumpai mengikut kriteria carian. Klik "Tambah Kursus" untuk mendaftar kursus baharu.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(c => {
+        const bil = getParticipantCountForCourse(c.id, c.kategori);
+        const badgeCls = c.kategori === 'MDL Lanjutan'
+          ? 'bg-gold-50 text-gold-700 border-gold-400/60'
+          : 'bg-royal-50 text-royal-800 border-royal-500/30';
+        return `
+          <tr class="hover:bg-royal-50/40 transition-colors">
+            <td class="py-3.5 px-4">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold border ${badgeCls}">${escapeHTML(c.kategori)}</span>
+                <span class="text-[11px] font-bold text-slate-500">${escapeHTML(c.kod)}</span>
+              </div>
+              <p class="font-bold text-obsidian-950">${escapeHTML(c.nama)}</p>
+            </td>
+            <td class="py-3.5 px-4 whitespace-nowrap">
+              <p class="font-semibold text-obsidian-900">${formatDateMY(c.tarikhMula)}</p>
+              <p class="text-[11px] text-slate-500">hingga ${formatDateMY(c.tarikhTamat)}</p>
+            </td>
+            <td class="py-3.5 px-4 text-obsidian-800 font-medium">${escapeHTML(c.tempat)}</td>
+            <td class="py-3.5 px-4 text-slate-600">${escapeHTML(c.sasaran)}</td>
+            <td class="py-3.5 px-4 text-center whitespace-nowrap">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-obsidian-950 text-gold-300 font-bold text-[11px]">${bil} / ${c.kuota}</span>
+            </td>
+            <td class="py-3.5 px-4 text-slate-600 max-w-[200px]">${escapeHTML(c.pengajar)}</td>
+            <td class="py-3.5 px-4 text-right whitespace-nowrap no-print">
+              <button onclick="openCourseModal('${c.id}')" title="Sunting Kursus" class="p-1.5 rounded-lg text-slate-500 hover:text-royal-800 hover:bg-royal-50">
+                <i data-lucide="pencil" class="w-4 h-4"></i>
+              </button>
+              <button onclick="confirmDeleteCourse('${c.id}')" title="Padam Kursus" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    /* ---------- RENDER TAB 3: PESERTA MDL PERTENGAHAN ---------- */
+    function renderPertengahan() {
+      const q = (document.getElementById('searchPertengahan').value || '').toLowerCase();
+      const filterCrs = document.getElementById('filterKursusPertengahan').value;
+      const filterPPD = document.getElementById('filterPPDPertengahan').value;
+      const validCourseIds = new Set(getFilteredCourses().map(c => c.id));
+
+      const list = state.participants.filter(p => {
+        if (!validCourseIds.has(p.pertengahanCourseId)) return false;
+        if (filterCrs !== 'ALL' && p.pertengahanCourseId !== filterCrs) return false;
+        if (filterPPD !== 'ALL' && p.ppd !== filterPPD) return false;
+        if (q) {
+          const hay = `${p.nama} ${p.ic} ${p.jawatan} ${p.sekolah} ${p.ppd}`.toLowerCase();
+          return hay.includes(q);
+        }
+        return true;
+      });
+
+      const tbody = document.getElementById('tablePertengahanBody');
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-slate-400">Tiada peserta MDL Pertengahan dijumpai.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(p => {
+        const crs = getCourseById(p.pertengahanCourseId);
+        const statusBadge = p.pertengahanStatus === 'Lulus'
+          ? 'bg-royal-50 text-royal-800 border-royal-500/40'
+          : (p.pertengahanStatus === 'Tidak Hadir' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-gold-50 text-gold-700 border-gold-400/50');
+
+        let progressTag = '';
+        if (p.lanjutanCourseId) {
+          const lCrs = getCourseById(p.lanjutanCourseId);
+          progressTag = `<span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-obsidian-950 text-gold-300"><i data-lucide="check-check" class="w-3 h-3"></i> Sudah Lanjutan (${lCrs ? lCrs.tahun : ''})</span>`;
+        } else if (p.pertengahanStatus === 'Lulus') {
+          progressTag = `<span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gold-100 text-gold-700">Layak ke Lanjutan</span>`;
+        }
+
+        return `
+          <tr class="hover:bg-royal-50/40 transition-colors">
+            <td class="py-3.5 px-4">
+              <p class="font-bold text-obsidian-950">${escapeHTML(p.nama)}</p>
+              <p class="text-[11px] text-slate-500 font-mono">${escapeHTML(p.ic)}</p>
+            </td>
+            <td class="py-3.5 px-4">
+              <p class="font-semibold text-obsidian-900">${escapeHTML(p.jawatan)}</p>
+              <span class="text-[11px] font-semibold text-slate-500">Gred ${escapeHTML(p.gred)}</span>
+            </td>
+            <td class="py-3.5 px-4">
+              <p class="font-semibold text-obsidian-900">${escapeHTML(p.sekolah)}</p>
+              <p class="text-[11px] text-slate-500">${escapeHTML(p.ppd)}</p>
+            </td>
+            <td class="py-3.5 px-4">
+              <p class="font-bold text-royal-800">${crs ? escapeHTML(crs.kod) : '-'}</p>
+              <p class="text-[11px] text-slate-500">Tahun ${crs ? crs.tahun : '-'}</p>
+            </td>
+            <td class="py-3.5 px-4 text-center">
+              <div><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${statusBadge}">${escapeHTML(p.pertengahanStatus)}</span></div>
+              <div>${progressTag}</div>
+            </td>
+            <td class="py-3.5 px-4 text-right whitespace-nowrap no-print">
+              ${(p.pertengahanStatus === 'Lulus' && !p.lanjutanCourseId)
+                ? `<button onclick="openLanjutanModal('${p.id}')" title="Naik Taraf ke MDL Lanjutan" class="px-2.5 py-1.5 mr-1 rounded-lg gold-gradient text-obsidian-950 text-[11px] font-extrabold hover:brightness-105">Ke Lanjutan ↑</button>`
+                : ''}
+              <button onclick="openPertengahanModal('${p.id}')" title="Sunting" class="p-1.5 rounded-lg text-slate-500 hover:text-royal-800 hover:bg-royal-50">
+                <i data-lucide="pencil" class="w-4 h-4"></i>
+              </button>
+              <button onclick="confirmDeleteParticipant('${p.id}')" title="Padam" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    /* ---------- RENDER TAB 4: PESERTA MDL LANJUTAN ---------- */
+    function renderLanjutan() {
+      const q = (document.getElementById('searchLanjutan').value || '').toLowerCase();
+      const filterCrs = document.getElementById('filterKursusLanjutan').value;
+      const validCourseIds = new Set(getFilteredCourses().map(c => c.id));
+
+      const list = state.participants.filter(p => {
+        if (!p.lanjutanCourseId) return false;
+        if (!validCourseIds.has(p.lanjutanCourseId)) return false;
+        if (filterCrs !== 'ALL' && p.lanjutanCourseId !== filterCrs) return false;
+        if (q) {
+          const hay = `${p.nama} ${p.ic} ${p.jawatan} ${p.sekolah} ${p.ppd}`.toLowerCase();
+          return hay.includes(q);
+        }
+        return true;
+      });
+
+      const tbody = document.getElementById('tableLanjutanBody');
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-slate-400">Tiada peserta MDL Lanjutan bagi kriteria dipilih.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(p => {
+        const pCrs = getCourseById(p.pertengahanCourseId);
+        const lCrs = getCourseById(p.lanjutanCourseId);
+        const badge = p.lanjutanStatus === 'Lulus'
+          ? 'bg-gold-100 text-gold-700 border-gold-400'
+          : (p.lanjutanStatus === 'Tidak Hadir' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-royal-50 text-royal-800 border-royal-400');
+
+        return `
+          <tr class="hover:bg-royal-50/40 transition-colors">
+            <td class="py-3.5 px-4">
+              <p class="font-bold text-obsidian-950">${escapeHTML(p.nama)}</p>
+              <p class="text-[11px] text-slate-500 font-mono">${escapeHTML(p.ic)}</p>
+            </td>
+            <td class="py-3.5 px-4">
+              <p class="font-semibold text-obsidian-900">${escapeHTML(p.jawatan)} (${escapeHTML(p.gred)})</p>
+              <p class="text-[11px] text-slate-500">${escapeHTML(p.sekolah)} • ${escapeHTML(p.ppd)}</p>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-royal-50 text-royal-800 border border-royal-500/30 text-[10px] font-bold">
+                <i data-lucide="check-circle" class="w-3 h-3"></i> ${pCrs ? escapeHTML(pCrs.kod) : 'Rekod Pertengahan'}
+              </span>
+              <p class="text-[11px] text-slate-500 mt-0.5">Tamat Tahun ${pCrs ? pCrs.tahun : '-'}</p>
+            </td>
+            <td class="py-3.5 px-4">
+              <p class="font-bold text-obsidian-950">${lCrs ? escapeHTML(lCrs.kod) : '-'}</p>
+              <p class="text-[11px] text-slate-500">Tahun ${lCrs ? lCrs.tahun : '-'} • ${lCrs ? escapeHTML(lCrs.tempat) : ''}</p>
+            </td>
+            <td class="py-3.5 px-4 text-center">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold border ${badge}">${escapeHTML(p.lanjutanStatus)}</span>
+            </td>
+            <td class="py-3.5 px-4 text-right whitespace-nowrap no-print">
+              <button onclick="confirmRemoveFromLanjutan('${p.id}')" title="Keluarkan dari MDL Lanjutan" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50">
+                <i data-lucide="user-minus" class="w-4 h-4"></i>
+              </button>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    /* ---------- RENDER TAB 5: KEWANGAN ---------- */
+    function renderKewangan() {
+      const fCourses = getFilteredCourses();
+      const totalPeruntukan = fCourses.reduce((s, c) => s + (parseFloat(c.peruntukan) || 0), 0);
+      const totalBelanja = fCourses.reduce((s, c) => s + (parseFloat(c.belanja) || 0), 0);
+      const totalBaki = totalPeruntukan - totalBelanja;
+
+      let totalPeserta = 0;
+      fCourses.forEach(c => {
+        totalPeserta += getParticipantCountForCourse(c.id, c.kategori);
+      });
+      const kosPerPeserta = totalPeserta > 0 ? (totalBelanja / totalPeserta) : 0;
+
+      document.getElementById('finTotalPeruntukan').textContent = formatRM(totalPeruntukan);
+      document.getElementById('finTotalBelanja').textContent = formatRM(totalBelanja);
+      document.getElementById('finTotalBaki').textContent = formatRM(totalBaki);
+      document.getElementById('finKosPeserta').textContent = formatRM(kosPerPeserta);
+
+      const tbody = document.getElementById('tableKewanganBody');
+      if (fCourses.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="py-10 text-center text-slate-400">Tiada rekod kewangan bagi tahun dipilih.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = fCourses.map(c => {
+        const peruntukan = parseFloat(c.peruntukan) || 0;
+        const belanja = parseFloat(c.belanja) || 0;
+        const baki = peruntukan - belanja;
+        const pct = peruntukan > 0 ? Math.min(100, Math.round((belanja / peruntukan) * 100)) : 0;
+        const barColor = pct > 95 ? 'gold-gradient' : 'bg-royal-800';
+
+        return `
+          <tr class="hover:bg-royal-50/40 transition-colors">
+            <td class="py-3.5 px-4">
+              <p class="font-bold text-obsidian-950">${escapeHTML(c.kod)}</p>
+              <p class="text-[11px] text-slate-500">${escapeHTML(c.nama)}</p>
+            </td>
+            <td class="py-3.5 px-4 font-bold text-obsidian-900">${escapeHTML(c.tahun)}</td>
+            <td class="py-3.5 px-4 text-right font-semibold text-obsidian-800 whitespace-nowrap">${formatRM(peruntukan)}</td>
+            <td class="py-3.5 px-4 text-right font-extrabold text-royal-800 whitespace-nowrap">${formatRM(belanja)}</td>
+            <td class="py-3.5 px-4 text-right font-extrabold ${baki < 0 ? 'text-rose-600' : 'text-gold-700'} whitespace-nowrap">${formatRM(baki)}</td>
+            <td class="py-3.5 px-4 min-w-[125px]">
+              <div class="flex items-center gap-2">
+                <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div class="h-full ${barColor} rounded-full" style="width:${pct}%"></div>
+                </div>
+                <span class="text-[11px] font-bold text-obsidian-900 w-9 text-right">${pct}%</span>
+              </div>
+            </td>
+            <td class="py-3.5 px-4 text-slate-600 text-[11px]">${escapeHTML(c.noLO || '-')}</td>
+            <td class="py-3.5 px-4 text-right no-print">
+              <button onclick="openFinanceModal('${c.id}')" class="px-3 py-1.5 rounded-lg bg-obsidian-950 hover:bg-royal-800 text-gold-300 font-bold text-[11px] transition-colors">
+                Kemaskini
+              </button>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    /*************************************************************************
+     * 7. OPERASI CRUD (MODAL & SIMPAN DATA)
+     *************************************************************************/
+    function openModal(id) {
+      const m = document.getElementById(id);
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    /* --- CRUD KURSUS --- */
+    function openCourseModal(courseId = null) {
+      const form = document.getElementById('courseForm');
+      form.reset();
+      document.getElementById('cId').value = '';
+
+      if (courseId) {
+        const c = getCourseById(courseId);
+        if (!c) return;
+        document.getElementById('courseModalTitle').textContent = 'Sunting Maklumat Kursus CPD';
+        document.getElementById('cId').value = c.id;
+        document.getElementById('cKod').value = c.kod;
+        document.getElementById('cKategori').value = c.kategori;
+        document.getElementById('cTahun').value = c.tahun;
+        document.getElementById('cNama').value = c.nama;
+        document.getElementById('cTarikhMula').value = c.tarikhMula;
+        document.getElementById('cTarikhTamat').value = c.tarikhTamat;
+        document.getElementById('cTempat').value = c.tempat;
+        document.getElementById('cSasaran').value = c.sasaran;
+        document.getElementById('cKuota').value = c.kuota;
+        document.getElementById('cPengajar').value = c.pengajar;
+        document.getElementById('cPeruntukan').value = c.peruntukan;
+        document.getElementById('cBelanja').value = c.belanja;
+        document.getElementById('cNoLO').value = c.noLO || '';
+      } else {
+        document.getElementById('courseModalTitle').textContent = 'Tambah Kursus CPD Baharu';
+        document.getElementById('cTahun').value = (state.yearFilter !== 'ALL') ? state.yearFilter : '2027';
+      }
+      openModal('courseModal');
+    }
+
+    function saveCourse(e) {
+      e.preventDefault();
+      const id = document.getElementById('cId').value;
+      const obj = {
+        id: id || ('CRS-' + Date.now()),
+        kod: document.getElementById('cKod').value.trim(),
+        kategori: document.getElementById('cKategori').value,
+        tahun: document.getElementById('cTahun').value,
+        nama: document.getElementById('cNama').value.trim(),
+        tarikhMula: document.getElementById('cTarikhMula').value,
+        tarikhTamat: document.getElementById('cTarikhTamat').value,
+        tempat: document.getElementById('cTempat').value.trim(),
+        sasaran: document.getElementById('cSasaran').value.trim(),
+        kuota: parseInt(document.getElementById('cKuota').value, 10) || 30,
+        pengajar: document.getElementById('cPengajar').value.trim(),
+        peruntukan: parseFloat(document.getElementById('cPeruntukan').value) || 0,
+        belanja: parseFloat(document.getElementById('cBelanja').value) || 0,
+        noLO: document.getElementById('cNoLO').value.trim()
+      };
+
+      if (id) {
+        const idx = state.courses.findIndex(c => c.id === id);
+        if (idx !== -1) state.courses[idx] = obj;
+        showToast('Maklumat kursus berjaya dikemaskini.');
+      } else {
+        state.courses.unshift(obj);
+        showToast('Kursus CPD baharu berjaya ditambah.');
+      }
+
+      persistData();
+      closeModal('courseModal');
+      renderAll();
+    }
+
+    function confirmDeleteCourse(courseId) {
+      const c = getCourseById(courseId);
+      if (!c) return;
+      showConfirmModal(
+        'Padam Kursus CPD?',
+        `Anda pasti mahu memadam kursus "${c.kod}"? Tindakan ini tidak boleh dikembalikan.`,
+        () => {
+          state.courses = state.courses.filter(x => x.id !== courseId);
+          state.participants.forEach(p => {
+            if (p.lanjutanCourseId === courseId) {
+              p.lanjutanCourseId = null;
+              p.lanjutanStatus = null;
+            }
+          });
+          persistData();
+          renderAll();
+          showToast('Kursus telah dipadam.', 'info');
+        }
+      );
+    }
+
+    /* --- CRUD PESERTA PERTENGAHAN --- */
+    function openPertengahanModal(participantId = null) {
+      const form = document.getElementById('pertengahanForm');
+      form.reset();
+      document.getElementById('pId').value = '';
+
+      const pCourses = state.courses.filter(c => c.kategori === 'MDL Pertengahan');
+      const sel = document.getElementById('pCourseId');
+      if (pCourses.length === 0) {
+        showToast('Sila tambah sekurang-kurangnya satu kursus MDL Pertengahan terlebih dahulu.', 'error');
+        return;
+      }
+      sel.innerHTML = pCourses.map(c => `<option value="${c.id}">${escapeHTML(c.kod)} – ${escapeHTML(c.tahun)} (${escapeHTML(c.tempat)})</option>`).join('');
+
+      if (participantId) {
+        const p = state.participants.find(x => x.id === participantId);
+        if (!p) return;
+        document.getElementById('pertengahanModalTitle').textContent = 'Sunting Peserta MDL Pertengahan';
+        document.getElementById('pId').value = p.id;
+        document.getElementById('pNama').value = p.nama;
+        document.getElementById('pIC').value = p.ic;
+        document.getElementById('pJawatan').value = p.jawatan;
+        document.getElementById('pGred').value = p.gred;
+        document.getElementById('pSekolah').value = p.sekolah;
+        document.getElementById('pPPD').value = p.ppd;
+        document.getElementById('pCourseId').value = p.pertengahanCourseId;
+        document.getElementById('pStatus').value = p.pertengahanStatus;
+      } else {
+        document.getElementById('pertengahanModalTitle').textContent = 'Daftar Peserta MDL Pertengahan';
+      }
+
+      openModal('pertengahanModal');
+    }
+
+    function savePertengahan(e) {
+      e.preventDefault();
+      const id = document.getElementById('pId').value;
+      const existing = id ? state.participants.find(x => x.id === id) : null;
+
+      const obj = {
+        id: id || ('P-' + Date.now()),
+        nama: document.getElementById('pNama').value.trim(),
+        ic: document.getElementById('pIC').value.trim(),
+        jawatan: document.getElementById('pJawatan').value,
+        gred: document.getElementById('pGred').value,
+        sekolah: document.getElementById('pSekolah').value.trim(),
+        ppd: document.getElementById('pPPD').value,
+        pertengahanCourseId: document.getElementById('pCourseId').value,
+        pertengahanStatus: document.getElementById('pStatus').value,
+        lanjutanCourseId: existing ? existing.lanjutanCourseId : null,
+        lanjutanStatus: existing ? existing.lanjutanStatus : null
+      };
+
+      if (id) {
+        const idx = state.participants.findIndex(x => x.id === id);
+        if (idx !== -1) state.participants[idx] = obj;
+        showToast('Rekod peserta berjaya dikemaskini.');
+      } else {
+        state.participants.unshift(obj);
+        showToast('Peserta MDL Pertengahan berjaya didaftarkan.');
+      }
+
+      persistData();
+      closeModal('pertengahanModal');
+      renderAll();
+    }
+
+    function confirmDeleteParticipant(participantId) {
+      const p = state.participants.find(x => x.id === participantId);
+      if (!p) return;
+      showConfirmModal(
+        'Padam Rekod Peserta?',
+        `Anda pasti mahu memadam rekod "${p.nama}" (termasuk rekod Lanjutan jika ada)?`,
+        () => {
+          state.participants = state.participants.filter(x => x.id !== participantId);
+          persistData();
+          renderAll();
+          showToast('Rekod peserta telah dipadam.', 'info');
+        }
+      );
+    }
+
+    /* --- CRUD PESERTA MDL LANJUTAN --- */
+    function openLanjutanModal(preselectParticipantId = null) {
+      const eligible = state.participants.filter(p => p.pertengahanStatus === 'Lulus' && !p.lanjutanCourseId);
+      const lCourses = state.courses.filter(c => c.kategori === 'MDL Lanjutan');
+
+      const selP = document.getElementById('lParticipantId');
+      const selC = document.getElementById('lCourseId');
+      const submitBtn = document.getElementById('btnSubmitLanjutan');
+
+      if (lCourses.length === 0) {
+        showToast('Sila tambah sekurang-kurangnya satu kursus MDL Lanjutan terlebih dahulu.', 'error');
+        return;
+      }
+
+      if (eligible.length === 0) {
+        selP.innerHTML = `<option value="">-- Tiada alumni Pertengahan yang layak / belum mendaftar --</option>`;
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        selP.innerHTML = eligible.map(p => {
+          const pCrs = getCourseById(p.pertengahanCourseId);
+          return `<option value="${p.id}">${escapeHTML(p.nama)} (${escapeHTML(p.sekolah)} • Pertengahan ${pCrs ? pCrs.tahun : ''})</option>`;
+        }).join('');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        if (preselectParticipantId) selP.value = preselectParticipantId;
+      }
+
+      selC.innerHTML = lCourses.map(c => `<option value="${c.id}">${escapeHTML(c.kod)} – Tahun ${c.tahun} (${escapeHTML(c.tempat)})</option>`).join('');
+      openModal('lanjutanModal');
+    }
+
+    function saveLanjutan(e) {
+      e.preventDefault();
+      const pid = document.getElementById('lParticipantId').value;
+      const cid = document.getElementById('lCourseId').value;
+      const status = document.getElementById('lStatus').value;
+
+      const p = state.participants.find(x => x.id === pid);
+      if (!p) {
+        showToast('Sila pilih calon yang layak.', 'error');
+        return;
+      }
+
+      p.lanjutanCourseId = cid;
+      p.lanjutanStatus = status;
+
+      persistData();
+      closeModal('lanjutanModal');
+      renderAll();
+      showToast(`${p.nama} berjaya didaftarkan ke MDL Lanjutan!`);
+    }
+
+    function confirmRemoveFromLanjutan(participantId) {
+      const p = state.participants.find(x => x.id === participantId);
+      if (!p) return;
+      showConfirmModal(
+        'Keluarkan daripada MDL Lanjutan?',
+        `Rekod MDL Pertengahan bagi "${p.nama}" akan dikekalkan, hanya pendaftaran MDL Lanjutan akan dibatalkan.`,
+        () => {
+          p.lanjutanCourseId = null;
+          p.lanjutanStatus = null;
+          persistData();
+          renderAll();
+          showToast('Peserta dikeluarkan daripada senarai MDL Lanjutan.', 'info');
+        }
+      );
+    }
+
+    /* --- KEMASKINI KEWANGAN --- */
+    function openFinanceModal(courseId) {
+      const c = getCourseById(courseId);
+      if (!c) return;
+      document.getElementById('fCourseId').value = c.id;
+      document.getElementById('fCourseLabel').textContent = `${c.kod} – ${c.nama} (${c.tahun})`;
+      document.getElementById('fPeruntukan').value = c.peruntukan;
+      document.getElementById('fBelanja').value = c.belanja;
+      document.getElementById('fNoLO').value = c.noLO || '';
+      openModal('financeModal');
+    }
+
+    function saveFinance(e) {
+      e.preventDefault();
+      const cid = document.getElementById('fCourseId').value;
+      const c = getCourseById(cid);
+      if (!c) return;
+      c.peruntukan = parseFloat(document.getElementById('fPeruntukan').value) || 0;
+      c.belanja = parseFloat(document.getElementById('fBelanja').value) || 0;
+      c.noLO = document.getElementById('fNoLO').value.trim();
+
+      persistData();
+      closeModal('financeModal');
+      renderAll();
+      showToast('Rekod kewangan kursus berjaya dikemaskini.');
+    }
+
+    /* --- MODAL PENGESAHAN UMUM --- */
+    function showConfirmModal(title, message, onConfirm) {
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').textContent = message;
+      const btn = document.getElementById('confirmActionBtn');
+      btn.onclick = () => {
+        closeModal('confirmModal');
+        onConfirm();
+      };
+      openModal('confirmModal');
+    }
+
+    /*************************************************************************
+     * 8. EKSPORT CSV
+     *************************************************************************/
+    function exportCSV(type) {
+      let headers = [];
+      let rows = [];
+      const fCourses = getFilteredCourses();
+      const validIds = new Set(fCourses.map(c => c.id));
+
+      if (type === 'jadual') {
+        headers = ['Kod Kursus', 'Kategori', 'Nama Kursus', 'Tahun', 'Tarikh Mula', 'Tarikh Tamat', 'Tempat', 'Sasaran', 'Bil Peserta', 'Kuota', 'Tenaga Pengajar'];
+        rows = fCourses.map(c => [
+          c.kod, c.kategori, c.nama, c.tahun, c.tarikhMula, c.tarikhTamat, c.tempat, c.sasaran,
+          getParticipantCountForCourse(c.id, c.kategori), c.kuota, c.pengajar
+        ]);
+      } else if (type === 'pertengahan') {
+        headers = ['Nama', 'No. KP', 'Jawatan', 'Gred', 'Sekolah/Organisasi', 'PPD', 'Kod Kursus Pertengahan', 'Tahun', 'Status', 'Sudah Lanjutan'];
+        rows = state.participants.filter(p => validIds.has(p.pertengahanCourseId)).map(p => {
+          const c = getCourseById(p.pertengahanCourseId);
+          return [p.nama, p.ic, p.jawatan, p.gred, p.sekolah, p.ppd, c ? c.kod : '', c ? c.tahun : '', p.pertengahanStatus, p.lanjutanCourseId ? 'Ya' : 'Belum'];
+        });
+      } else if (type === 'lanjutan') {
+        headers = ['Nama', 'No. KP', 'Jawatan', 'Gred', 'Sekolah/Organisasi', 'PPD', 'Kod Pertengahan (Asal)', 'Kod Lanjutan', 'Tahun Lanjutan', 'Status Lanjutan'];
+        rows = state.participants.filter(p => p.lanjutanCourseId && validIds.has(p.lanjutanCourseId)).map(p => {
+          const pc = getCourseById(p.pertengahanCourseId);
+          const lc = getCourseById(p.lanjutanCourseId);
+          return [p.nama, p.ic, p.jawatan, p.gred, p.sekolah, p.ppd, pc ? pc.kod : '', lc ? lc.kod : '', lc ? lc.tahun : '', p.lanjutanStatus];
+        });
+      } else if (type === 'kewangan') {
+        headers = ['Kod Kursus', 'Nama Kursus', 'Tahun', 'Peruntukan (RM)', 'Perbelanjaan (RM)', 'Baki (RM)', 'No LO / Catatan'];
+        rows = fCourses.map(c => [c.kod, c.nama, c.tahun, c.peruntukan, c.belanja, (c.peruntukan - c.belanja), c.noLO || '']);
+      }
+
+      const csvContent = [headers, ...rows]
+        .map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `JKTD_IAB_Sabah_${type}_${state.yearFilter}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast(`Fail CSV (${type}) berjaya dimuat turun.`);
+    }
+
+    // Mulakan Aplikasi
+    document.addEventListener('DOMContentLoaded', () => {
+      setGlobalYear('ALL');
+      switchTab('dashboard');
+      initApp();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
